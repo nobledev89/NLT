@@ -24,36 +24,40 @@ export interface CurrentUser {
  * request. Returns null when not signed in.
  */
 export const getCurrentUser = cache(async (): Promise<CurrentUser | null> => {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) return null;
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) return null;
 
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('*')
-    .eq('id', user.id)
-    .single();
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', user.id)
+      .single();
 
-  if (!profile) return null;
+    if (!profile) return null;
 
-  let permissions: ModulePermission[] = [];
-  if (profile.role === 'staff') {
-    const { data: perms } = await supabase
-      .from('staff_permissions')
-      .select('module')
-      .eq('profile_id', user.id);
-    permissions = (perms ?? []).map((p) => p.module as ModulePermission);
+    let permissions: ModulePermission[] = [];
+    if (profile.role === 'staff') {
+      const { data: perms } = await supabase
+        .from('staff_permissions')
+        .select('module')
+        .eq('profile_id', user.id);
+      permissions = (perms ?? []).map((p) => p.module as ModulePermission);
+    }
+
+    const actor: Actor = {
+      id: profile.id,
+      role: profile.role as Role,
+      permissions,
+    };
+
+    return { id: user.id, email: profile.email, profile, actor };
+  } catch {
+    return null;
   }
-
-  const actor: Actor = {
-    id: profile.id,
-    role: profile.role as Role,
-    permissions,
-  };
-
-  return { id: user.id, email: profile.email, profile, actor };
 });
 
 /** Redirect to login if not authenticated; returns the current user. */

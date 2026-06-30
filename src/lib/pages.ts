@@ -13,24 +13,28 @@ export interface LoadedPage {
  */
 export const getPublishedPage = cache(
   async (slug: string): Promise<LoadedPage | null> => {
-    const supabase = await createClient();
-    const { data: page } = await supabase
-      .from('pages')
-      .select('*')
-      .eq('slug', slug)
-      .eq('status', 'published')
-      .is('deleted_at', null)
-      .maybeSingle();
+    try {
+      const supabase = await createClient();
+      const { data: page } = await supabase
+        .from('pages')
+        .select('*')
+        .eq('slug', slug)
+        .eq('status', 'published')
+        .is('deleted_at', null)
+        .maybeSingle();
 
-    if (!page) return null;
+      if (!page) return null;
 
-    const { data: blocks } = await supabase
-      .from('page_blocks')
-      .select('*')
-      .eq('page_id', page.id)
-      .order('position');
+      const { data: blocks } = await supabase
+        .from('page_blocks')
+        .select('*')
+        .eq('page_id', page.id)
+        .order('position');
 
-    return { page, blocks: blocks ?? [] };
+      return { page, blocks: blocks ?? [] };
+    } catch {
+      return null;
+    }
   }
 );
 
