@@ -21,11 +21,41 @@ import { formatDateTime } from '@/lib/utils';
 export const dynamic = 'force-dynamic';
 
 async function count(table: string, build: (q: any) => any) {
-  const supabase = await createClient();
-  let q = supabase.from(table).select('*', { count: 'exact', head: true });
-  q = build(q);
-  const { count: c } = await q;
-  return c ?? 0;
+  try {
+    const supabase = await createClient();
+    let q = supabase.from(table).select('*', { count: 'exact', head: true });
+    q = build(q);
+    const { count: c, error } = await q;
+    if (error) {
+      console.error(`[admin] count failed for ${table}:`, error.message);
+      return 0;
+    }
+    return c ?? 0;
+  } catch (error) {
+    console.error(`[admin] count failed for ${table}:`, error);
+    return 0;
+  }
+}
+
+async function getNextEvents(nowIso: string) {
+  try {
+    const supabase = await createClient();
+    const { data, error } = await supabase
+      .from('events')
+      .select('id, title, slug, start_at, status')
+      .gte('start_at', nowIso)
+      .order('start_at')
+      .limit(5);
+
+    if (error) {
+      console.error('[admin] next events failed:', error.message);
+      return [];
+    }
+    return data ?? [];
+  } catch (error) {
+    console.error('[admin] next events failed:', error);
+    return [];
+  }
 }
 
 export default async function AdminOverview({
@@ -35,7 +65,6 @@ export default async function AdminOverview({
 }) {
   const user = await requireDashboard();
   const { denied } = await searchParams;
-  const supabase = await createClient();
   const nowIso = new Date().toISOString();
 
   const [upcomingEvents, recentRsvps, formSubs, pledgeSubs, draftPosts, pendingComments] =
@@ -60,14 +89,7 @@ export default async function AdminOverview({
         : Promise.resolve(0),
     ]);
 
-  const { data: nextEvents } = can(user.actor, 'events')
-    ? await supabase
-        .from('events')
-        .select('id, title, slug, start_at, status')
-        .gte('start_at', nowIso)
-        .order('start_at')
-        .limit(5)
-    : { data: [] as any[] };
+  const nextEvents = can(user.actor, 'events') ? await getNextEvents(nowIso) : [];
 
   const stats = [
     { label: 'Upcoming events', value: upcomingEvents, icon: CalendarDays, href: '/admin/events', show: can(user.actor, 'events') },
@@ -131,11 +153,11 @@ export default async function AdminOverview({
                   <Link href="/admin/events"><Plus className="h-4 w-4" /> Manage</Link>
                 </Button>
               </div>
-              {(nextEvents ?? []).length === 0 ? (
+              {nextEvents.length === 0 ? (
                 <p className="text-sm text-muted-foreground">No upcoming events.</p>
               ) : (
                 <ul className="divide-y divide-border">
-                  {(nextEvents ?? []).map((e: any) => (
+                  {nextEvents.map((e: any) => (
                     <li key={e.id} className="flex items-center justify-between py-3">
                       <div>
                         <p className="text-sm font-medium">{e.title}</p>
