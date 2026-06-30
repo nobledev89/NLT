@@ -3,15 +3,69 @@
 import * as React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Menu, X } from 'lucide-react';
-import { type AdminSection, GROUP_LABELS } from '@/lib/admin-nav';
+import {
+  CalendarDays,
+  ClipboardList,
+  FileText,
+  HandCoins,
+  HeartHandshake,
+  ImageIcon,
+  Inbox,
+  LayoutDashboard,
+  MailOpen,
+  Menu,
+  MessageSquare,
+  Newspaper,
+  Radio,
+  Receipt,
+  ScrollText,
+  Settings,
+  ShoppingBag,
+  Users,
+  X,
+  type LucideIcon,
+} from 'lucide-react';
 import { cn } from '@/lib/utils';
+
+type AdminSidebarSection = {
+  label: string;
+  href: string;
+  group: 'main' | 'content' | 'people' | 'system';
+};
+
+const GROUP_LABELS: Record<AdminSidebarSection['group'], string> = {
+  main: '',
+  content: 'Content',
+  people: 'People',
+  system: 'System',
+};
+
+const ICONS_BY_HREF: Record<string, LucideIcon> = {
+  '/admin': LayoutDashboard,
+  '/admin/pages': FileText,
+  '/admin/posts': Newspaper,
+  '/admin/comments': MessageSquare,
+  '/admin/services': Radio,
+  '/admin/events': CalendarDays,
+  '/admin/rsvps': ClipboardList,
+  '/admin/ministries': HeartHandshake,
+  '/admin/pledge-campaigns': HandCoins,
+  '/admin/pledge-submissions': Receipt,
+  '/admin/forms': Inbox,
+  '/admin/form-submissions': MailOpen,
+  '/admin/merch': ShoppingBag,
+  '/admin/media': ImageIcon,
+  '/admin/users': Users,
+  '/admin/navigation': Menu,
+  '/admin/settings': Settings,
+  '/admin/audit': ScrollText,
+};
 
 export function AdminSidebar({
   sections,
   churchName,
 }: {
-  sections: AdminSection[];
+  sections: AdminSidebarSection[];
   churchName: string;
 }) {
   const pathname = usePathname();
@@ -33,7 +87,7 @@ export function AdminSidebar({
             )}
             {items.map((s) => {
               const active = s.href === '/admin' ? pathname === '/admin' : pathname.startsWith(s.href);
-              const Icon = s.icon;
+              const Icon = ICONS_BY_HREF[s.href] ?? LayoutDashboard;
               return (
                 <Link
                   key={s.href}

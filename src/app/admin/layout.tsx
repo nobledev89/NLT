@@ -13,7 +13,7 @@ export default async function AdminLayout({
 }) {
   const user = await requireDashboard();
   const settings = await getSiteSettings();
-  const sections = visibleSections(user.actor);
+  const sections = visibleSections(user.actor).map(({ icon: _icon, requirement: _requirement, ...section }) => section);
 
   return (
     <div className="flex min-h-dvh bg-background">
