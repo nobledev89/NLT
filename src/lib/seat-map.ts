@@ -26,6 +26,8 @@ type SectionDef = {
   suffix: 'A' | 'B';
   /** total grid columns the section spans (widest block) */
   gridCols: number;
+  /** empty seat-height rows rendered above the section's blocks */
+  topSpacerRows?: number;
   blocks: BlockDef[];
 };
 
@@ -45,6 +47,8 @@ const SECTIONS: SectionDef[] = [
     title: 'Section B',
     suffix: 'B',
     gridCols: 7,
+    // first row is left empty; Section B seats start on the second row
+    topSpacerRows: 1,
     blocks: [
       // upper block is 6 wide and right-aligned against the 7-wide lower block
       { rows: 4, cols: 6, start: 1, order: 'rtl', colOffset: 1 },
@@ -59,6 +63,7 @@ export type SeatSection = {
   id: 'A' | 'B';
   title: string;
   gridCols: number;
+  topSpacerRows: number;
   blocks: SeatBlock[];
 };
 
@@ -76,7 +81,13 @@ function buildSection(def: SectionDef): SeatSection {
     }
     return { gridCols: def.gridCols, rows };
   });
-  return { id: def.id, title: def.title, gridCols: def.gridCols, blocks };
+  return {
+    id: def.id,
+    title: def.title,
+    gridCols: def.gridCols,
+    topSpacerRows: def.topSpacerRows ?? 0,
+    blocks,
+  };
 }
 
 /** Render-ready seat map (sections → blocks → rows → seats). */

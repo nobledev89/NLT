@@ -85,6 +85,9 @@ export function SeatBooking({
                   {section.title}
                 </p>
                 <div className="space-y-1.5">
+                  {Array.from({ length: section.topSpacerRows }).map((_, i) => (
+                    <div key={`spacer-${i}`} aria-hidden className="h-8" />
+                  ))}
                   {section.blocks.map((block, bi) => (
                     <div key={bi} className={cn('space-y-1.5', bi > 0 && 'pt-4')}>
                       {block.rows.map((row, ri) => (
