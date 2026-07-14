@@ -215,6 +215,24 @@ values
    true, false, false, null, 'Prayer', false, 'published', true)
 on conflict (slug) do nothing;
 
+-- ----- NLT Anniversary 2026 (reserved-seating event) ------------------
+-- Real event with the seat map enabled. guest_rsvp_allowed doubles as
+-- "allow non-members to book"; seating_enabled turns on the seat picker.
+
+insert into public.events (
+  slug, title, description_html, start_at, end_at, venue, address,
+  is_public, rsvp_enabled, guest_rsvp_allowed, seating_enabled,
+  category, is_featured, status, is_placeholder
+)
+values
+  ('nlt-anniversary-2026', 'NLT Anniversary 2026',
+   '<p>Celebrate another year of God''s faithfulness with the New Life Tagum family. Join us for a night of worship, testimony, and thanksgiving as we mark our church anniversary together.</p><p>Seating is reserved — pick your seat below to secure your spot. Payment is settled at the venue for now.</p>',
+   timestamptz '2026-09-20 17:00:00+08', timestamptz '2026-09-20 20:00:00+08',
+   'Main Auditorium', '1489 Manuel B. Suaybaguio Sr. St, Tagum, Davao del Norte',
+   true, false, true, true,
+   'Anniversary', true, 'published', false)
+on conflict (slug) do nothing;
+
 -- ----- ministries -----------------------------------------------------
 
 insert into public.ministries (slug, name, short_description, long_description_html, leader_name, meeting_schedule, location, published, is_placeholder, position)

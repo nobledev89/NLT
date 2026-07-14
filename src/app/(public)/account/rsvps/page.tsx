@@ -35,17 +35,42 @@ const STATUS_VARIANT: Record<RsvpStatus, 'success' | 'warning' | 'muted'> = {
   cancelled: 'muted',
 };
 
+interface SeatBookingWithEvent {
+  id: string;
+  seat_label: string;
+  events: RsvpEvent | null;
+}
+
 export default async function MyRsvpsPage() {
   const user = await requireUser('/account/rsvps');
   const supabase = await createClient();
 
-  const { data } = await supabase
-    .from('event_rsvps')
-    .select('*, events(title, slug, start_at, venue)')
-    .eq('profile_id', user.id)
-    .order('created_at', { ascending: false });
+  const [{ data }, { data: seatData }] = await Promise.all([
+    supabase
+      .from('event_rsvps')
+      .select('*, events(title, slug, start_at, venue)')
+      .eq('profile_id', user.id)
+      .order('created_at', { ascending: false }),
+    supabase
+      .from('event_seat_bookings')
+      .select('id, seat_label, events(title, slug, start_at, venue)')
+      .eq('profile_id', user.id)
+      .eq('status', 'reserved')
+      .order('created_at', { ascending: false }),
+  ]);
 
   const rsvps = (data ?? []) as unknown as RsvpWithEvent[];
+  const seatBookings = (seatData ?? []) as unknown as SeatBookingWithEvent[];
+
+  // Group reserved seats by event.
+  const seatsByEvent = new Map<string, { event: RsvpEvent | null; seats: string[] }>();
+  for (const b of seatBookings) {
+    const key = b.events?.slug ?? b.id;
+    const entry = seatsByEvent.get(key) ?? { event: b.events, seats: [] };
+    entry.seats.push(b.seat_label);
+    seatsByEvent.set(key, entry);
+  }
+  const seatGroups = [...seatsByEvent.values()];
 
   return (
     <div className="space-y-6">
@@ -103,6 +128,47 @@ export default async function MyRsvpsPage() {
             </li>
           ))}
         </ul>
+      )}
+
+      {seatGroups.length > 0 && (
+        <div className="space-y-4 pt-4">
+          <div>
+            <h2 className="font-serif text-2xl tracking-tight">My reserved seats</h2>
+            <p className="text-sm text-muted-foreground">Seats you have booked for events.</p>
+          </div>
+          <ul className="space-y-4">
+            {seatGroups.map((group, i) => (
+              <li key={group.event?.slug ?? i}>
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="truncate">
+                      {group.event?.slug ? (
+                        <Link href={`/events/${group.event.slug}`} className="hover:text-gold">
+                          {group.event.title}
+                        </Link>
+                      ) : (
+                        (group.event?.title ?? 'Event')
+                      )}
+                    </CardTitle>
+                    <CardDescription>
+                      {group.event?.start_at ? formatDateTime(group.event.start_at) : null}
+                      {group.event?.venue ? ` · ${group.event.venue}` : null}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="flex flex-wrap items-center gap-2">
+                    {[...group.seats]
+                      .sort((a, b) => Number(a.split('-')[0]) - Number(b.split('-')[0]))
+                      .map((seat) => (
+                        <Badge key={seat} variant="success">
+                          {seat}
+                        </Badge>
+                      ))}
+                  </CardContent>
+                </Card>
+              </li>
+            ))}
+          </ul>
+        </div>
       )}
     </div>
   );

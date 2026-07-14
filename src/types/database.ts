@@ -21,6 +21,7 @@ export type PublishStatus = 'draft' | 'published';
 export type PostStatus = 'draft' | 'scheduled' | 'published' | 'archived';
 export type CommentStatus = 'pending' | 'approved' | 'rejected' | 'hidden';
 export type RsvpStatus = 'confirmed' | 'cancelled' | 'waitlist';
+export type SeatBookingStatus = 'reserved' | 'cancelled';
 export type PledgeStatus = 'pending' | 'confirmed' | 'received' | 'cancelled';
 export type CampaignStatus = 'upcoming' | 'active' | 'completed' | 'cancelled';
 export type SubmissionStatus = 'new' | 'archived';
@@ -226,6 +227,7 @@ export type EventRow = {
   guest_rsvp_allowed: boolean;
   rsvp_capacity: number | null;
   rsvp_deadline: string | null;
+  seating_enabled: boolean;
   category: string | null;
   is_featured: boolean;
   status: PublishStatus;
@@ -234,6 +236,20 @@ export type EventRow = {
   created_at: string;
   updated_at: string;
   deleted_at: string | null;
+}
+
+export type EventSeatBookingRow = {
+  id: string;
+  event_id: string;
+  seat_label: string;
+  profile_id: string | null;
+  guest_name: string | null;
+  guest_email: string | null;
+  guest_phone: string | null;
+  status: SeatBookingStatus;
+  ip_hash: string | null;
+  created_at: string;
+  updated_at: string;
 }
 
 export type EventRsvpRow = {
@@ -421,6 +437,7 @@ export interface Database {
       sermons: TableShape<SermonRow>;
       events: TableShape<EventRow>;
       event_rsvps: TableShape<EventRsvpRow>;
+      event_seat_bookings: TableShape<EventSeatBookingRow>;
       ministries: TableShape<MinistryRow>;
       pledge_campaigns: TableShape<PledgeCampaignRow>;
       bank_accounts: TableShape<BankAccountRow>;

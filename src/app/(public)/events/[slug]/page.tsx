@@ -189,9 +189,23 @@ export default async function EventDetailPage({
             {event.description_html && <RichText html={event.description_html} />}
           </div>
 
-          {/* RSVP sidebar */}
-          {event.rsvp_enabled && (
-            <aside className="lg:sticky lg:top-24 lg:self-start">
+          {/* Booking / RSVP sidebar */}
+          {(event.seating_enabled || event.rsvp_enabled) && (
+            <aside className="space-y-6 lg:sticky lg:top-24 lg:self-start">
+              {event.seating_enabled && (
+                <div className="rounded-2xl border border-gold/40 bg-gold/5 p-6">
+                  <h2 className="text-lg font-serif font-medium">Reserve your seat</h2>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    Pick your seat from the venue map. Online payment is coming soon — your seat is
+                    held and settled at the venue for now.
+                  </p>
+                  <Button asChild className="mt-4 w-full">
+                    <Link href={`/events/${event.slug}/seats`}>Book your seat</Link>
+                  </Button>
+                </div>
+              )}
+
+              {event.rsvp_enabled && (
               <div className="rounded-2xl border border-border bg-card/60 p-6">
                 <h2 className="text-lg font-serif font-medium">RSVP</h2>
                 {remaining != null && !isFull && !deadlinePassed && (
@@ -225,6 +239,7 @@ export default async function EventDetailPage({
                   )}
                 </div>
               </div>
+              )}
             </aside>
           )}
         </div>

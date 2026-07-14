@@ -69,6 +69,28 @@ export const rsvpSchema = z.object({
   website: honeypot,
 });
 
+// ----- seat booking --------------------------------------------------
+
+export const seatBookingSchema = z.object({
+  eventId: z.string().uuid(),
+  // comma-separated seat labels from the picker, e.g. "12-A,13-A"
+  seats: z
+    .string()
+    .trim()
+    .min(1, 'Please select at least one seat')
+    .transform((s) => s.split(',').map((v) => v.trim()).filter(Boolean))
+    .pipe(
+      z
+        .array(z.string().max(12))
+        .min(1, 'Please select at least one seat')
+        .max(10, 'You can reserve up to 10 seats at once')
+    ),
+  guestName: z.string().trim().min(2, 'Enter your name').max(120).optional().or(z.literal('')),
+  guestEmail: emailSchema.optional().or(z.literal('')),
+  guestPhone: phoneSchema,
+  website: honeypot,
+});
+
 // ----- dynamic connection form --------------------------------------
 
 /**
@@ -122,6 +144,7 @@ export const eventInputSchema = z.object({
   guestRsvpAllowed: z.boolean().default(false),
   rsvpCapacity: z.coerce.number().int().positive().optional().nullable(),
   rsvpDeadline: z.string().optional().or(z.literal('')),
+  seatingEnabled: z.boolean().default(false),
   category: z.string().trim().max(60).optional().or(z.literal('')),
   isFeatured: z.boolean().default(false),
   status: z.enum(['draft', 'published']),

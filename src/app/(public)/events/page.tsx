@@ -2,9 +2,11 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { getPublishedPage, pageMetadata } from '@/lib/pages';
 import { createClient } from '@/lib/supabase/server';
+import { CalendarDays, MapPin, Ticket } from 'lucide-react';
 import { PageHero, EmptyState } from '@/components/site/page-hero';
 import { EventCard } from '@/components/site/content-cards';
-import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
+import { cn, formatDateTime } from '@/lib/utils';
 import type { EventRow } from '@/types/database';
 
 export const revalidate = 60;
@@ -67,6 +69,22 @@ export default async function EventsPage({
     ...new Set((catRows ?? []).map((r) => r.category).filter(Boolean) as string[]),
   ].sort();
 
+  // Highlight an upcoming seat-booking event (e.g. the anniversary).
+  const { data: seatingRows } = await supabase
+    .from('events')
+    .select('*')
+    .eq('status', 'published')
+    .eq('is_public', true)
+    .eq('seating_enabled', true)
+    .is('deleted_at', null)
+    .gte('start_at', nowIso)
+    .order('start_at', { ascending: true })
+    .limit(1);
+  const seatingEvent = ((seatingRows ?? []) as EventRow[])[0] ?? null;
+  const seatingBlurb = seatingEvent?.description_html
+    ? seatingEvent.description_html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 180)
+    : null;
+
   const filters: { key: Filter; label: string }[] = [
     { key: 'upcoming', label: 'Upcoming' },
     { key: 'past', label: 'Past' },
@@ -93,6 +111,47 @@ export default async function EventsPage({
 
       <section className="section">
         <div className="container space-y-8">
+          {/* Featured seat-booking event */}
+          {seatingEvent && (
+            <div className="overflow-hidden rounded-2xl border border-gold/40 bg-gradient-to-br from-gold/10 via-card/40 to-background p-6 md:p-8">
+              <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
+                <div className="space-y-3">
+                  <span className="inline-flex items-center gap-1.5 rounded-full border border-gold/40 bg-gold/10 px-3 py-1 text-xs font-medium text-gold">
+                    <Ticket className="h-3.5 w-3.5" /> Reserved seating
+                  </span>
+                  <h2 className="text-2xl font-serif font-medium md:text-3xl">
+                    {seatingEvent.title}
+                  </h2>
+                  {seatingBlurb && (
+                    <p className="max-w-2xl text-sm leading-relaxed text-muted-foreground">
+                      {seatingBlurb}
+                    </p>
+                  )}
+                  <div className="flex flex-wrap gap-x-5 gap-y-1 text-sm text-muted-foreground">
+                    <span className="flex items-center gap-1.5">
+                      <CalendarDays className="h-4 w-4 text-gold" />
+                      {formatDateTime(seatingEvent.start_at)}
+                    </span>
+                    {seatingEvent.venue && (
+                      <span className="flex items-center gap-1.5">
+                        <MapPin className="h-4 w-4 text-gold" />
+                        {seatingEvent.venue}
+                      </span>
+                    )}
+                  </div>
+                </div>
+                <div className="flex shrink-0 flex-col gap-2 sm:flex-row md:flex-col">
+                  <Button asChild size="lg">
+                    <Link href={`/events/${seatingEvent.slug}/seats`}>Book your seat</Link>
+                  </Button>
+                  <Button asChild variant="outline" size="lg">
+                    <Link href={`/events/${seatingEvent.slug}`}>Event details</Link>
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Filter tabs */}
           <nav aria-label="Event time filter" className="flex flex-wrap gap-2">
             {filters.map((f) => (

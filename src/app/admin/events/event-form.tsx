@@ -145,6 +145,12 @@ export function EventForm({ event }: { event?: EventRow }) {
           <Field label="RSVP deadline" htmlFor="rsvpDeadline" error={fe.rsvpDeadline}>
             <Input id="rsvpDeadline" name="rsvpDeadline" type="datetime-local" defaultValue={dtLocal(event?.rsvp_deadline)} />
           </Field>
+          <SwitchField
+            name="seatingEnabled"
+            label="Enable reserved seating"
+            hint="Show the venue seat map so visitors can pick and reserve seats. Guest bookings follow the guest-RSVP setting above."
+            defaultChecked={event?.seating_enabled ?? false}
+          />
         </CardContent>
       </Card>
 
