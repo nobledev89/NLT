@@ -40,6 +40,8 @@ const SECTIONS: SectionDef[] = [
     blocks: [
       { rows: 5, cols: 7, start: 1, order: 'ltr' },
       { rows: 8, cols: 7, start: 36, order: 'ltr' },
+      // extra bottom row: 92-A, 93-A, 94-A
+      { rows: 1, cols: 3, start: 92, order: 'ltr' },
     ],
   },
   {
@@ -53,6 +55,8 @@ const SECTIONS: SectionDef[] = [
       // upper block is 6 wide and right-aligned against the 7-wide lower block
       { rows: 4, cols: 6, start: 1, order: 'rtl', colOffset: 1 },
       { rows: 8, cols: 7, start: 25, order: 'rtl' },
+      // extra bottom row: 83-B, 82-B, 81-B (right-aligned, matching B's flow)
+      { rows: 1, cols: 3, start: 81, order: 'rtl', colOffset: 4 },
     ],
   },
 ];
