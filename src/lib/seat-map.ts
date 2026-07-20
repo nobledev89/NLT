@@ -113,3 +113,20 @@ export const TOTAL_SEATS = ALL_SEAT_LABELS.length;
 
 /** Max seats a single booking may reserve at once. */
 export const MAX_SEATS_PER_BOOKING = 10;
+
+/**
+ * Service sessions. Each seating-enabled event runs the same seat map twice —
+ * a morning and an evening service — with independent availability.
+ */
+export type ServiceSession = 'morning' | 'evening';
+
+export const SERVICE_SESSIONS: { id: ServiceSession; label: string; short: string }[] = [
+  { id: 'morning', label: 'Morning Service', short: 'Morning' },
+  { id: 'evening', label: 'Evening Service', short: 'Evening' },
+];
+
+const SERVICE_SESSION_IDS = new Set<string>(SERVICE_SESSIONS.map((s) => s.id));
+
+export function isValidServiceSession(value: string): value is ServiceSession {
+  return SERVICE_SESSION_IDS.has(value);
+}

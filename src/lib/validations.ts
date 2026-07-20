@@ -73,6 +73,7 @@ export const rsvpSchema = z.object({
 
 export const seatBookingSchema = z.object({
   eventId: z.string().uuid(),
+  session: z.enum(['morning', 'evening']),
   // comma-separated seat labels from the picker, e.g. "12-A,13-A"
   seats: z
     .string()

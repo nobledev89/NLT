@@ -5,8 +5,7 @@ import { ArrowLeft, CalendarDays, MapPin } from 'lucide-react';
 import { createClient, createServiceRoleClient } from '@/lib/supabase/server';
 import { getCurrentUser } from '@/lib/auth';
 import { formatDateTime } from '@/lib/utils';
-import { TOTAL_SEATS } from '@/lib/seat-map';
-import type { EventRow } from '@/types/database';
+import type { EventRow, ServiceSession } from '@/types/database';
 import { SeatBooking } from './seat-booking';
 
 export const revalidate = 0;
@@ -50,15 +49,18 @@ export default async function SeatBookingPage({
 
   const user = await getCurrentUser();
 
-  // All active reservations (service role reads across all bookers).
+  // All active reservations (service role reads across all bookers), split by
+  // service session so the morning and evening maps are independent.
   const service = createServiceRoleClient();
   const { data: bookedRows } = await service
     .from('event_seat_bookings')
-    .select('seat_label')
+    .select('seat_label, service_session')
     .eq('event_id', event.id)
     .eq('status', 'reserved');
-  const bookedSeats = (bookedRows ?? []).map((r) => r.seat_label);
-  const remaining = Math.max(0, TOTAL_SEATS - bookedSeats.length);
+  const bookedBySession: Record<ServiceSession, string[]> = { morning: [], evening: [] };
+  for (const r of bookedRows ?? []) {
+    bookedBySession[r.service_session].push(r.seat_label);
+  }
 
   return (
     <div className="container py-10 md:py-14">
@@ -83,16 +85,13 @@ export default async function SeatBookingPage({
               {event.venue}
             </div>
           )}
-          <div>
-            {remaining} of {TOTAL_SEATS} seats available
-          </div>
         </dl>
       </header>
 
       <div className="mt-8">
         <SeatBooking
           eventId={event.id}
-          bookedSeats={bookedSeats}
+          bookedBySession={bookedBySession}
           isSignedIn={!!user}
           guestAllowed={event.guest_rsvp_allowed}
           eventSlug={event.slug}

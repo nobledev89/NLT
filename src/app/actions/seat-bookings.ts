@@ -8,7 +8,7 @@ import { logAudit } from '@/lib/audit';
 import { sendEmail, emailLayout } from '@/lib/email';
 import { formatDateTime } from '@/lib/utils';
 import { seatBookingSchema } from '@/lib/validations';
-import { isValidSeatLabel } from '@/lib/seat-map';
+import { isValidSeatLabel, SERVICE_SESSIONS } from '@/lib/seat-map';
 import { type ActionResult, fail, succeed, zodFieldErrors } from '@/lib/form';
 import type { EventRow } from '@/types/database';
 
@@ -26,6 +26,7 @@ export async function submitSeatBookingAction(
 ): Promise<ActionResult> {
   const parsed = seatBookingSchema.safeParse({
     eventId: rawString(formData, 'eventId'),
+    session: rawString(formData, 'session'),
     seats: rawString(formData, 'seats'),
     guestName: rawString(formData, 'guestName'),
     guestEmail: rawString(formData, 'guestEmail'),
@@ -37,6 +38,8 @@ export async function submitSeatBookingAction(
     return fail('Please check the form and try again.', zodFieldErrors(parsed.error));
   }
   const data = parsed.data;
+  const session = data.session;
+  const sessionLabel = SERVICE_SESSIONS.find((s) => s.id === session)?.label ?? 'Service';
 
   // Normalise + de-dupe selected seats; reject anything not on the map.
   const seats = [...new Set(data.seats)];
@@ -68,6 +71,7 @@ export async function submitSeatBookingAction(
     .from('event_seat_bookings')
     .select('seat_label')
     .eq('event_id', event.id)
+    .eq('service_session', session)
     .eq('status', 'reserved')
     .in('seat_label', seats);
   const taken = new Set((takenRows ?? []).map((r) => r.seat_label));
@@ -82,7 +86,12 @@ export async function submitSeatBookingAction(
 
   let notifyEmail: string | null = null;
   let notifyName = '';
-  const base: Record<string, unknown> = { event_id: event.id, status: 'reserved', ip_hash: ipHash };
+  const base: Record<string, unknown> = {
+    event_id: event.id,
+    service_session: session,
+    status: 'reserved',
+    ip_hash: ipHash,
+  };
 
   if (user) {
     base.profile_id = user.id;
@@ -126,7 +135,7 @@ export async function submitSeatBookingAction(
     action: 'seat_booking.create',
     entityType: 'event',
     entityId: event.id,
-    metadata: { seats },
+    metadata: { seats, session },
   });
 
   if (notifyEmail) {
@@ -137,9 +146,10 @@ export async function submitSeatBookingAction(
         'Your seats are reserved!',
         `<p>Dear ${notifyName},</p>
          <p>We've reserved the following ${seats.length === 1 ? 'seat' : 'seats'} for
-         <strong>${event.title}</strong>:</p>
+         <strong>${event.title}</strong> (${sessionLabel}):</p>
          <p style="font-size:18px;color:#d6ad6a"><strong>${seats.join(', ')}</strong></p>
-         <p><strong>When:</strong> ${formatDateTime(event.start_at)}<br/>
+         <p><strong>Service:</strong> ${sessionLabel}<br/>
+         <strong>When:</strong> ${formatDateTime(event.start_at)}<br/>
          ${event.venue ? `<strong>Where:</strong> ${event.venue}` : ''}</p>
          <p><strong>Payment:</strong> settled at the venue for now — online payment is coming soon.</p>
          <p>We look forward to seeing you!<br/>New Life Tagum</p>`
@@ -150,8 +160,8 @@ export async function submitSeatBookingAction(
   revalidatePath(`/events/${event.slug}/seats`);
 
   return succeed(
-    `You've reserved ${seats.length === 1 ? 'seat' : 'seats'} ${seats.join(', ')}. ` +
-      'A confirmation was sent if you provided an email.',
-    { data: { seats } }
+    `You've reserved ${seats.length === 1 ? 'seat' : 'seats'} ${seats.join(', ')} ` +
+      `for the ${sessionLabel}. A confirmation was sent if you provided an email.`,
+    { data: { seats, session } }
   );
 }

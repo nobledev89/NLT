@@ -38,8 +38,14 @@ const STATUS_VARIANT: Record<RsvpStatus, 'success' | 'warning' | 'muted'> = {
 interface SeatBookingWithEvent {
   id: string;
   seat_label: string;
+  service_session: 'morning' | 'evening';
   events: RsvpEvent | null;
 }
+
+const SESSION_LABEL: Record<'morning' | 'evening', string> = {
+  morning: 'Morning Service',
+  evening: 'Evening Service',
+};
 
 export default async function MyRsvpsPage() {
   const user = await requireUser('/account/rsvps');
@@ -53,7 +59,7 @@ export default async function MyRsvpsPage() {
       .order('created_at', { ascending: false }),
     supabase
       .from('event_seat_bookings')
-      .select('id, seat_label, events(title, slug, start_at, venue)')
+      .select('id, seat_label, service_session, events(title, slug, start_at, venue)')
       .eq('profile_id', user.id)
       .eq('status', 'reserved')
       .order('created_at', { ascending: false }),
@@ -62,11 +68,18 @@ export default async function MyRsvpsPage() {
   const rsvps = (data ?? []) as unknown as RsvpWithEvent[];
   const seatBookings = (seatData ?? []) as unknown as SeatBookingWithEvent[];
 
-  // Group reserved seats by event.
-  const seatsByEvent = new Map<string, { event: RsvpEvent | null; seats: string[] }>();
+  // Group reserved seats by event + service session.
+  const seatsByEvent = new Map<
+    string,
+    { event: RsvpEvent | null; session: 'morning' | 'evening'; seats: string[] }
+  >();
   for (const b of seatBookings) {
-    const key = b.events?.slug ?? b.id;
-    const entry = seatsByEvent.get(key) ?? { event: b.events, seats: [] };
+    const key = `${b.events?.slug ?? b.id}:${b.service_session}`;
+    const entry = seatsByEvent.get(key) ?? {
+      event: b.events,
+      session: b.service_session,
+      seats: [],
+    };
     entry.seats.push(b.seat_label);
     seatsByEvent.set(key, entry);
   }
@@ -138,7 +151,7 @@ export default async function MyRsvpsPage() {
           </div>
           <ul className="space-y-4">
             {seatGroups.map((group, i) => (
-              <li key={group.event?.slug ?? i}>
+              <li key={`${group.event?.slug ?? i}:${group.session}`}>
                 <Card>
                   <CardHeader>
                     <CardTitle className="truncate">
@@ -151,7 +164,8 @@ export default async function MyRsvpsPage() {
                       )}
                     </CardTitle>
                     <CardDescription>
-                      {group.event?.start_at ? formatDateTime(group.event.start_at) : null}
+                      {SESSION_LABEL[group.session]}
+                      {group.event?.start_at ? ` · ${formatDateTime(group.event.start_at)}` : null}
                       {group.event?.venue ? ` · ${group.event.venue}` : null}
                     </CardDescription>
                   </CardHeader>

@@ -22,6 +22,7 @@ export type PostStatus = 'draft' | 'scheduled' | 'published' | 'archived';
 export type CommentStatus = 'pending' | 'approved' | 'rejected' | 'hidden';
 export type RsvpStatus = 'confirmed' | 'cancelled' | 'waitlist';
 export type SeatBookingStatus = 'reserved' | 'cancelled';
+export type ServiceSession = 'morning' | 'evening';
 export type PledgeStatus = 'pending' | 'confirmed' | 'received' | 'cancelled';
 export type CampaignStatus = 'upcoming' | 'active' | 'completed' | 'cancelled';
 export type SubmissionStatus = 'new' | 'archived';
@@ -242,6 +243,7 @@ export type EventSeatBookingRow = {
   id: string;
   event_id: string;
   seat_label: string;
+  service_session: ServiceSession;
   profile_id: string | null;
   guest_name: string | null;
   guest_email: string | null;

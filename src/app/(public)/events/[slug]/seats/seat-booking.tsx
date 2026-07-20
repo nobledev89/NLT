@@ -2,10 +2,17 @@
 
 import * as React from 'react';
 import { useActionState } from 'react';
-import { CheckCircle2 } from 'lucide-react';
+import { CheckCircle2, Sun, Moon } from 'lucide-react';
 import { submitSeatBookingAction } from '@/app/actions/seat-bookings';
 import { initialActionState } from '@/lib/form';
-import { SEAT_MAP, MAX_SEATS_PER_BOOKING, type SeatSection } from '@/lib/seat-map';
+import {
+  SEAT_MAP,
+  MAX_SEATS_PER_BOOKING,
+  TOTAL_SEATS,
+  SERVICE_SESSIONS,
+  type SeatSection,
+  type ServiceSession,
+} from '@/lib/seat-map';
 import { Field, FormMessage } from '@/components/forms/field';
 import { SubmitButton } from '@/components/forms/submit-button';
 import { Input } from '@/components/ui/input';
@@ -18,41 +25,58 @@ const SECTION_STYLE: Record<SeatSection['id'], string> = {
   B: 'border-amber-500/40 bg-amber-500/10 text-amber-100 hover:bg-amber-500/25',
 };
 
+const SESSION_ICON: Record<ServiceSession, typeof Sun> = { morning: Sun, evening: Moon };
+
 export function SeatBooking({
   eventId,
-  bookedSeats,
+  bookedBySession,
   isSignedIn,
   guestAllowed,
 }: {
   eventId: string;
-  bookedSeats: string[];
+  bookedBySession: Record<ServiceSession, string[]>;
   isSignedIn: boolean;
   guestAllowed: boolean;
   eventSlug: string;
 }) {
   const [state, action] = useActionState(submitSeatBookingAction, initialActionState);
-  const [booked, setBooked] = React.useState<Set<string>>(() => new Set(bookedSeats));
+  const [session, setSession] = React.useState<ServiceSession>('morning');
+  const [bookedBy, setBookedBy] = React.useState<Record<ServiceSession, Set<string>>>(() => ({
+    morning: new Set(bookedBySession.morning),
+    evening: new Set(bookedBySession.evening),
+  }));
   const [selected, setSelected] = React.useState<Set<string>>(() => new Set());
 
   // Keep in sync if the server re-renders with fresh reservations.
   React.useEffect(() => {
-    setBooked(new Set(bookedSeats));
-  }, [bookedSeats]);
+    setBookedBy({
+      morning: new Set(bookedBySession.morning),
+      evening: new Set(bookedBySession.evening),
+    });
+  }, [bookedBySession]);
 
-  // On a successful booking, mark those seats taken and clear the selection.
+  // On a successful booking, mark those seats taken in the booked session and
+  // clear the selection.
   const lastHandled = React.useRef<ActionResultSeats | null>(null);
   React.useEffect(() => {
     if (state.ok && state !== lastHandled.current) {
       lastHandled.current = state as ActionResultSeats;
       const justBooked = (state.data?.seats as string[] | undefined) ?? [];
+      const bookedSession = (state.data?.session as ServiceSession | undefined) ?? session;
       if (justBooked.length) {
-        setBooked((prev) => new Set([...prev, ...justBooked]));
+        setBookedBy((prev) => ({
+          ...prev,
+          [bookedSession]: new Set([...prev[bookedSession], ...justBooked]),
+        }));
         setSelected(new Set());
       }
     }
-  }, [state]);
+  }, [state, session]);
+
+  const booked = bookedBy[session];
 
   function toggle(label: string) {
+    if (booked.has(label)) return;
     setSelected((prev) => {
       const next = new Set(prev);
       if (next.has(label)) {
@@ -65,20 +89,58 @@ export function SeatBooking({
     });
   }
 
+  function switchSession(next: ServiceSession) {
+    if (next === session) return;
+    setSession(next);
+    setSelected(new Set());
+  }
+
   const selectedList = [...selected].sort(sortSeatLabels);
   const atLimit = selected.size >= MAX_SEATS_PER_BOOKING;
   const needGuestInfo = !isSignedIn && guestAllowed;
 
   return (
-    <div className="grid gap-8 lg:grid-cols-[1fr_20rem] lg:items-start">
+    <div className={cn('grid gap-8 lg:grid-cols-[1fr_20rem] lg:items-start', selected.size > 0 && 'pb-24 lg:pb-0')}>
       {/* ---- Seat map ---- */}
       <div className="space-y-5">
+        {/* Service session picker */}
+        <div>
+          <p className="mb-2 text-sm font-medium text-foreground">Choose a service</p>
+          <div className="inline-flex w-full rounded-xl border border-border bg-card/40 p-1 sm:w-auto">
+            {SERVICE_SESSIONS.map((s) => {
+              const Icon = SESSION_ICON[s.id];
+              const remaining = Math.max(0, TOTAL_SEATS - bookedBy[s.id].size);
+              const active = s.id === session;
+              return (
+                <button
+                  key={s.id}
+                  type="button"
+                  aria-pressed={active}
+                  onClick={() => switchSession(s.id)}
+                  className={cn(
+                    'flex flex-1 items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-medium transition-colors sm:flex-none',
+                    active
+                      ? 'bg-gold text-background shadow-sm'
+                      : 'text-muted-foreground hover:text-foreground'
+                  )}
+                >
+                  <Icon className="h-4 w-4" />
+                  <span>{s.label}</span>
+                  <span className={cn('tabular-nums', active ? 'text-background/70' : 'opacity-60')}>
+                    · {remaining}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
         <div className="rounded-lg border border-border bg-card/40 py-2 text-center text-xs font-medium uppercase tracking-[0.3em] text-muted-foreground">
           Stage
         </div>
 
-        <div className="overflow-x-auto pb-2">
-          <div className="flex w-max gap-8">
+        <div className="-mx-4 overflow-x-auto px-4 pb-2 sm:mx-0 sm:px-0 [--seat:2rem] sm:[--seat:2.4rem]">
+          <div className="flex flex-col items-center gap-10 sm:w-max sm:flex-row sm:items-start sm:justify-center sm:gap-8">
             {SEAT_MAP.map((section) => (
               <section key={section.id} className="space-y-3">
                 <p className="text-center text-xs font-semibold uppercase tracking-wider text-muted-foreground">
@@ -86,17 +148,15 @@ export function SeatBooking({
                 </p>
                 <div className="space-y-1.5">
                   {Array.from({ length: section.topSpacerRows }).map((_, i) => (
-                    <div key={`spacer-${i}`} aria-hidden className="h-8" />
+                    <div key={`spacer-${i}`} aria-hidden className="h-[var(--seat)]" />
                   ))}
                   {section.blocks.map((block, bi) => (
                     <div key={bi} className={cn('space-y-1.5', bi > 0 && 'pt-4')}>
                       {block.rows.map((row, ri) => (
                         <div
                           key={ri}
-                          className="grid gap-1.5"
-                          style={{
-                            gridTemplateColumns: `repeat(${block.gridCols}, 2.5rem)`,
-                          }}
+                          className="grid gap-1.5 [grid-template-columns:repeat(var(--cols),var(--seat))]"
+                          style={{ ['--cols' as string]: block.gridCols }}
                         >
                           {row.map((seat) => {
                             const st: SeatState = booked.has(seat.label)
@@ -114,7 +174,7 @@ export function SeatBooking({
                                 onClick={() => toggle(seat.label)}
                                 style={{ gridColumnStart: seat.col }}
                                 className={cn(
-                                  'flex h-8 items-center justify-center rounded border text-[10px] font-medium tabular-nums transition-colors',
+                                  'flex h-[var(--seat)] w-[var(--seat)] items-center justify-center rounded border text-[9px] font-medium tabular-nums transition-colors sm:text-[10px]',
                                   st === 'available' &&
                                     cn(SECTION_STYLE[section.id], atLimit && 'cursor-not-allowed opacity-50'),
                                   st === 'selected' &&
@@ -147,12 +207,13 @@ export function SeatBooking({
       </div>
 
       {/* ---- Booking summary / form ---- */}
-      <aside className="lg:sticky lg:top-24">
+      <aside id="booking-form" className="scroll-mt-24 lg:sticky lg:top-24">
         <form
           action={action}
           className="space-y-4 rounded-2xl border border-border bg-card/60 p-6"
         >
           <input type="hidden" name="eventId" value={eventId} />
+          <input type="hidden" name="session" value={session} />
           <input type="hidden" name="seats" value={selectedList.join(',')} />
           <input
             type="text"
@@ -166,8 +227,12 @@ export function SeatBooking({
           <div>
             <h2 className="text-lg font-serif font-medium">Your seats</h2>
             <p className="mt-1 text-sm text-muted-foreground">
+              <span className="font-medium text-foreground">
+                {SERVICE_SESSIONS.find((s) => s.id === session)?.label}
+              </span>
+              {' — '}
               {selectedList.length === 0
-                ? 'Tap seats on the map to select them.'
+                ? 'tap seats on the map to select them.'
                 : `${selectedList.length} of ${MAX_SEATS_PER_BOOKING} selected`}
             </p>
           </div>
@@ -235,6 +300,22 @@ export function SeatBooking({
           </p>
         </form>
       </aside>
+
+      {/* ---- Mobile sticky action bar ---- */}
+      {selectedList.length > 0 && (
+        <div className="fixed inset-x-0 bottom-0 z-30 border-t border-border bg-background/95 p-3 backdrop-blur lg:hidden">
+          <a
+            href="#booking-form"
+            className="flex items-center justify-between gap-3 rounded-xl bg-gold px-4 py-3 text-sm font-semibold text-background"
+          >
+            <span>
+              {selectedList.length} {selectedList.length === 1 ? 'seat' : 'seats'} ·{' '}
+              {SERVICE_SESSIONS.find((s) => s.id === session)?.short}
+            </span>
+            <span>Review &amp; reserve →</span>
+          </a>
+        </div>
+      )}
     </div>
   );
 }
