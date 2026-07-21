@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import Link from 'next/link';
 import { Facebook, Youtube, Instagram, MapPin, Mail, Phone } from 'lucide-react';
 import { getNavigation } from '@/lib/navigation';
@@ -15,6 +16,13 @@ export async function SiteFooter() {
     <footer className="border-t border-border bg-card/40">
       <div className="container grid gap-12 py-16 md:grid-cols-2 lg:grid-cols-4">
         <div className="space-y-4">
+          <Image
+            src="/logo-mark-white.png"
+            alt={branding.churchName}
+            width={462}
+            height={120}
+            className="h-11 w-auto"
+          />
           <p className="font-serif text-xl">{branding.churchName}</p>
           <p className="max-w-xs text-sm leading-relaxed text-muted-foreground">
             {branding.tagline}

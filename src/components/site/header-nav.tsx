@@ -77,11 +77,16 @@ export function HeaderNav({
           {logoUrl ? (
             <Image src={logoUrl} alt={churchName} width={40} height={40} className="h-10 w-10 rounded-md object-cover" />
           ) : (
-            <span className="flex h-10 w-10 items-center justify-center rounded-md border border-gold/40 bg-gold/10 font-serif text-lg text-gold">
-              NL
-            </span>
+            <Image
+              src="/logo-mark-white.png"
+              alt={churchName}
+              width={462}
+              height={120}
+              priority
+              className="h-9 w-auto"
+            />
           )}
-          <span className="font-serif text-lg font-medium tracking-tight text-foreground">
+          <span className="hidden font-serif text-lg font-medium tracking-tight text-foreground sm:inline">
             {churchName}
           </span>
         </Link>
