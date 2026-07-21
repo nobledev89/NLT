@@ -22,11 +22,13 @@ import type {
 
 export function HeroBlock({ data }: { data: HeroData }) {
   const centered = data.alignment !== 'left';
+  const objectPosition = data.backgroundPosition ?? 'center';
   return (
     <section className="relative isolate overflow-hidden">
       {data.backgroundVideoUrl ? (
         <video
           className="absolute inset-0 -z-10 h-full w-full object-cover"
+          style={{ objectPosition }}
           autoPlay
           muted
           loop
@@ -36,7 +38,7 @@ export function HeroBlock({ data }: { data: HeroData }) {
           <source src={data.backgroundVideoUrl} />
         </video>
       ) : data.backgroundImageUrl ? (
-        <Image src={data.backgroundImageUrl} alt="" fill priority className="absolute inset-0 -z-10 object-cover" />
+        <Image src={data.backgroundImageUrl} alt="" fill priority style={{ objectPosition }} className="absolute inset-0 -z-10 object-cover" />
       ) : (
         <div className="absolute inset-0 -z-10 bg-gradient-to-b from-secondary/40 via-background to-background" />
       )}

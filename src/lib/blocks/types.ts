@@ -55,6 +55,9 @@ export interface HeroData {
   subheading?: string;
   backgroundImageUrl?: string;
   backgroundVideoUrl?: string;
+  /** CSS object-position for the background media (e.g. '75% center'). Controls
+   *  the focal point when the image is cropped on narrow/tall viewports. */
+  backgroundPosition?: string;
   primaryCta?: { label: string; href: string };
   secondaryCta?: { label: string; href: string };
   alignment?: 'left' | 'center';

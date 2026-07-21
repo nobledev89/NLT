@@ -28,7 +28,12 @@ export default async function HomePage() {
     if (b.block_type !== 'hero') return b;
     const data = (b.data ?? {}) as Record<string, unknown>;
     if (data.backgroundImageUrl || data.backgroundVideoUrl) return b;
-    return { ...b, data: { ...data, backgroundImageUrl: '/hero.png' } };
+    // Focus the crop on the person (right side of the photo) so mobile shows
+    // them rather than the outstretched arm.
+    return {
+      ...b,
+      data: { ...data, backgroundImageUrl: '/hero.png', backgroundPosition: '75% center' },
+    };
   });
   const orgJsonLd = {
     '@context': 'https://schema.org',
@@ -68,7 +73,7 @@ function StaticHome() {
           fill
           priority
           sizes="100vw"
-          className="absolute inset-0 -z-10 object-cover"
+          className="absolute inset-0 -z-10 object-cover object-[75%_center]"
         />
         <div className="absolute inset-0 -z-10 bg-gradient-to-t from-background via-background/70 to-background/40" />
         <div className="absolute inset-0 -z-10 bg-gradient-to-r from-background/85 via-background/40 to-transparent" />
