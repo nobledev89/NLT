@@ -6,6 +6,7 @@ import { absoluteUrl } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { ArrowRight } from 'lucide-react';
+import Image from 'next/image';
 import Link from 'next/link';
 
 export const revalidate = 60;
@@ -49,10 +50,18 @@ function StaticHome() {
   return (
     <>
       <section className="relative isolate overflow-hidden border-b border-border/60">
-        {/* Layered ember wash over near-black */}
-        <div className="absolute inset-0 -z-10 bg-gradient-to-b from-secondary/30 via-background to-background" />
-        <div className="absolute inset-0 -z-10 bg-grain" />
-        <div className="absolute -right-24 top-0 -z-10 h-[36rem] w-[36rem] rounded-full bg-primary/10 blur-3xl" />
+        {/* Hero background photo with layered scrims so the cream text stays
+            legible over the image (vertical fade + left-side darkening). */}
+        <Image
+          src="/hero.png"
+          alt=""
+          fill
+          priority
+          sizes="100vw"
+          className="absolute inset-0 -z-10 object-cover"
+        />
+        <div className="absolute inset-0 -z-10 bg-gradient-to-t from-background via-background/70 to-background/40" />
+        <div className="absolute inset-0 -z-10 bg-gradient-to-r from-background/85 via-background/40 to-transparent" />
         <div className="container flex min-h-[64vh] flex-col justify-center py-24 md:min-h-[72vh] md:py-32">
           <div className="max-w-3xl space-y-6 animate-fade-in">
             <p className="eyebrow">New Life Tagum</p>
