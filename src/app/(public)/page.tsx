@@ -20,6 +20,16 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function HomePage() {
   const loaded = await getPublishedPage('home');
   const settings = await getSiteSettings();
+
+  // The home hero should show the site hero photo. If the CMS hero block has no
+  // background image set, fall back to /hero.png (without overriding an image an
+  // admin has chosen). Scoped to the home page so other heroes are untouched.
+  const blocks = (loaded?.blocks ?? []).map((b) => {
+    if (b.block_type !== 'hero') return b;
+    const data = (b.data ?? {}) as Record<string, unknown>;
+    if (data.backgroundImageUrl || data.backgroundVideoUrl) return b;
+    return { ...b, data: { ...data, backgroundImageUrl: '/hero.png' } };
+  });
   const orgJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Church',
@@ -41,7 +51,7 @@ export default async function HomePage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }}
       />
-      {loaded ? <BlockList blocks={loaded.blocks} /> : <StaticHome />}
+      {loaded ? <BlockList blocks={blocks} /> : <StaticHome />}
     </>
   );
 }
