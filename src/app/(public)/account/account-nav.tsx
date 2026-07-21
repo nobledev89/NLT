@@ -26,7 +26,7 @@ export function AccountNav({ showDashboard }: { showDashboard: boolean }) {
             className={cn(
               'rounded-md px-3 py-2 text-sm transition-colors',
               active
-                ? 'bg-card text-gold'
+                ? 'bg-card text-brand'
                 : 'text-muted-foreground hover:bg-card/60 hover:text-foreground'
             )}
           >
@@ -38,7 +38,7 @@ export function AccountNav({ showDashboard }: { showDashboard: boolean }) {
       {showDashboard && (
         <Link
           href="/admin"
-          className="mt-2 rounded-md border border-border px-3 py-2 text-sm text-foreground transition-colors hover:border-gold hover:text-gold"
+          className="mt-2 rounded-md border border-border px-3 py-2 text-sm text-foreground transition-colors hover:border-brand hover:text-brand"
         >
           Go to Dashboard
         </Link>

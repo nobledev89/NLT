@@ -113,10 +113,10 @@ export default async function EventsPage({
         <div className="container space-y-8">
           {/* Featured seat-booking event */}
           {seatingEvent && (
-            <div className="overflow-hidden rounded-2xl border border-gold/40 bg-gradient-to-br from-gold/10 via-card/40 to-background p-6 md:p-8">
+            <div className="overflow-hidden rounded-2xl border border-brand/40 bg-gradient-to-br from-brand/10 via-card/40 to-background p-6 md:p-8">
               <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
                 <div className="space-y-3">
-                  <span className="inline-flex items-center gap-1.5 rounded-full border border-gold/40 bg-gold/10 px-3 py-1 text-xs font-medium text-gold">
+                  <span className="inline-flex items-center gap-1.5 rounded-full border border-brand/40 bg-brand/10 px-3 py-1 text-xs font-medium text-brand">
                     <Ticket className="h-3.5 w-3.5" /> Reserved seating
                   </span>
                   <h2 className="text-2xl font-serif font-medium md:text-3xl">
@@ -129,12 +129,12 @@ export default async function EventsPage({
                   )}
                   <div className="flex flex-wrap gap-x-5 gap-y-1 text-sm text-muted-foreground">
                     <span className="flex items-center gap-1.5">
-                      <CalendarDays className="h-4 w-4 text-gold" />
+                      <CalendarDays className="h-4 w-4 text-brand" />
                       {formatDateTime(seatingEvent.start_at)}
                     </span>
                     {seatingEvent.venue && (
                       <span className="flex items-center gap-1.5">
-                        <MapPin className="h-4 w-4 text-gold" />
+                        <MapPin className="h-4 w-4 text-brand" />
                         {seatingEvent.venue}
                       </span>
                     )}
@@ -161,8 +161,8 @@ export default async function EventsPage({
                 className={cn(
                   'rounded-full border px-4 py-1.5 text-sm font-medium transition-colors',
                   filter === f.key
-                    ? 'border-gold/50 bg-gold/15 text-gold'
-                    : 'border-border text-muted-foreground hover:border-gold/40 hover:text-foreground'
+                    ? 'border-brand/50 bg-brand/15 text-brand'
+                    : 'border-border text-muted-foreground hover:border-brand/40 hover:text-foreground'
                 )}
               >
                 {f.label}

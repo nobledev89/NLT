@@ -71,7 +71,7 @@ export function CommentSection({
           <p className="rounded-xl border border-border bg-card/50 p-5 text-sm text-muted-foreground">
             <Link
               href={`/login?redirect=/posts/${postSlug}`}
-              className="font-medium text-gold underline-offset-4 hover:underline"
+              className="font-medium text-brand underline-offset-4 hover:underline"
             >
               Sign in
             </Link>{' '}

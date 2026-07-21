@@ -6,7 +6,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
       <header className="flex items-center justify-center py-8">
         <Link
           href="/"
-          className="font-serif text-lg tracking-wide text-foreground transition-colors hover:text-gold"
+          className="font-serif text-lg tracking-wide text-foreground transition-colors hover:text-brand"
         >
           New Life Tagum
         </Link>

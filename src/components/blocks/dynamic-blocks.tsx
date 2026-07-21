@@ -41,7 +41,7 @@ export async function ScheduleBlock({ data }: { data: ScheduleData }) {
                   <p className="font-medium">{s.title}</p>
                   <p className="text-sm text-muted-foreground">{s.day}{s.location ? ` · ${s.location}` : ''}</p>
                 </div>
-                <p className="font-semibold text-gold">{s.time}</p>
+                <p className="font-semibold text-brand">{s.time}</p>
               </div>
             ))}
           </div>

@@ -30,7 +30,7 @@ export default function ForgotPasswordPage() {
       <CardFooter className="justify-center text-sm text-muted-foreground">
         <p>
           Remembered it?{' '}
-          <Link href="/login" className="text-gold hover:underline">
+          <Link href="/login" className="text-brand hover:underline">
             Back to sign in
           </Link>
         </p>

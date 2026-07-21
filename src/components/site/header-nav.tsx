@@ -101,7 +101,7 @@ export function HeaderNav({
                     <Link
                       href={item.href}
                       className={cn(
-                        'rounded-md px-3 py-2 text-sm font-medium text-foreground/80 transition-colors hover:text-foreground data-[active]:text-gold'
+                        'rounded-md px-3 py-2 text-sm font-medium text-foreground/80 transition-colors hover:text-foreground data-[active]:text-brand'
                       )}
                     >
                       {item.label}

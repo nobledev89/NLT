@@ -49,7 +49,7 @@ export default async function PagesPage() {
                   {pages.map((page) => (
                     <tr key={page.id} className="border-b border-border last:border-0 hover:bg-secondary/40">
                       <td className="px-4 py-3">
-                        <Link href={`/admin/pages/${page.id}`} className="font-medium hover:text-gold">
+                        <Link href={`/admin/pages/${page.id}`} className="font-medium hover:text-brand">
                           {page.title}
                         </Link>
                         {page.is_placeholder && (

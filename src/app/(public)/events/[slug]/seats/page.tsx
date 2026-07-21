@@ -76,12 +76,12 @@ export default async function SeatBookingPage({
         <h1 className="text-3xl font-serif font-medium md:text-4xl">{event.title}</h1>
         <dl className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted-foreground">
           <div className="flex items-center gap-2">
-            <CalendarDays className="h-4 w-4 text-gold" />
+            <CalendarDays className="h-4 w-4 text-brand" />
             {formatDateTime(event.start_at)}
           </div>
           {event.venue && (
             <div className="flex items-center gap-2">
-              <MapPin className="h-4 w-4 text-gold" />
+              <MapPin className="h-4 w-4 text-brand" />
               {event.venue}
             </div>
           )}

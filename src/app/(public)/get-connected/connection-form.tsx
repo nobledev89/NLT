@@ -72,7 +72,7 @@ export function ConnectionForm({
                 <Checkbox name={field.field_key} />
                 <span>
                   {field.label}
-                  {(field.required || field.field_type === 'consent') && <span className="ml-0.5 text-gold">*</span>}
+                  {(field.required || field.field_type === 'consent') && <span className="ml-0.5 text-brand">*</span>}
                 </span>
               </label>
             </Field>

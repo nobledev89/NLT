@@ -63,7 +63,7 @@ export default async function MyCommentsPage() {
                     {comment.posts?.slug ? (
                       <Link
                         href={`/blog/${comment.posts.slug}`}
-                        className="text-foreground hover:text-gold"
+                        className="text-foreground hover:text-brand"
                       >
                         {comment.posts.title}
                       </Link>

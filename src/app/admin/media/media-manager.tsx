@@ -97,7 +97,7 @@ export function MediaManager({ assets }: { assets: MediaAssetRow[] }) {
           {assets.map((asset) => (
             <div
               key={asset.id}
-              className="group overflow-hidden rounded-lg border border-border bg-card transition-colors hover:border-gold/40"
+              className="group overflow-hidden rounded-lg border border-border bg-card transition-colors hover:border-brand/40"
             >
               <div className="relative aspect-square bg-muted">
                 <Image

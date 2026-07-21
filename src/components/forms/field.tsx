@@ -24,7 +24,7 @@ export function Field({
       {label && (
         <Label htmlFor={htmlFor}>
           {label}
-          {required && <span className="ml-0.5 text-gold">*</span>}
+          {required && <span className="ml-0.5 text-brand">*</span>}
         </Label>
       )}
       {children}

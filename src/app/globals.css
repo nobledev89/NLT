@@ -4,65 +4,65 @@
 
 @layer base {
   :root {
-    /* Dark, warm, reverent identity — deep charcoal + warm gold accent.
+    /* Dark, warm, reverent identity — near-black charcoal + ember-orange accent.
        The site is dark-only; tokens live on :root and are mirrored on .dark
        so shadcn-style components resolve correctly regardless of class. */
-    --background: 24 10% 6%;
-    --foreground: 36 30% 92%;
+    --background: 20 14% 5%;
+    --foreground: 30 20% 92%;
 
-    --card: 24 10% 9%;
-    --card-foreground: 36 30% 92%;
+    --card: 22 13% 8%;
+    --card-foreground: 30 20% 92%;
 
-    --popover: 24 12% 8%;
-    --popover-foreground: 36 30% 92%;
+    --popover: 22 14% 7%;
+    --popover-foreground: 30 20% 92%;
 
-    --primary: 38 55% 58%;
-    --primary-foreground: 24 30% 8%;
+    --primary: 22 90% 56%;
+    --primary-foreground: 24 45% 8%;
 
-    --secondary: 24 8% 16%;
-    --secondary-foreground: 36 24% 88%;
+    --secondary: 22 10% 15%;
+    --secondary-foreground: 30 18% 88%;
 
-    --muted: 24 8% 14%;
-    --muted-foreground: 36 12% 64%;
+    --muted: 22 10% 13%;
+    --muted-foreground: 28 10% 63%;
 
-    --accent: 38 45% 22%;
-    --accent-foreground: 38 60% 80%;
+    --accent: 20 60% 16%;
+    --accent-foreground: 24 88% 74%;
 
     --destructive: 0 62% 48%;
-    --destructive-foreground: 36 30% 96%;
+    --destructive-foreground: 30 30% 96%;
 
-    --border: 30 8% 18%;
-    --input: 30 8% 18%;
-    --ring: 38 55% 58%;
+    --border: 24 10% 17%;
+    --input: 24 10% 17%;
+    --ring: 22 90% 56%;
 
-    --gold: 38 60% 60%;
-    --gold-muted: 38 30% 42%;
+    --brand: 24 92% 58%;
+    --brand-muted: 20 55% 40%;
 
     --radius: 0.625rem;
   }
 
   .dark {
-    --background: 24 10% 6%;
-    --foreground: 36 30% 92%;
-    --card: 24 10% 9%;
-    --card-foreground: 36 30% 92%;
-    --popover: 24 12% 8%;
-    --popover-foreground: 36 30% 92%;
-    --primary: 38 55% 58%;
-    --primary-foreground: 24 30% 8%;
-    --secondary: 24 8% 16%;
-    --secondary-foreground: 36 24% 88%;
-    --muted: 24 8% 14%;
-    --muted-foreground: 36 12% 64%;
-    --accent: 38 45% 22%;
-    --accent-foreground: 38 60% 80%;
+    --background: 20 14% 5%;
+    --foreground: 30 20% 92%;
+    --card: 22 13% 8%;
+    --card-foreground: 30 20% 92%;
+    --popover: 22 14% 7%;
+    --popover-foreground: 30 20% 92%;
+    --primary: 22 90% 56%;
+    --primary-foreground: 24 45% 8%;
+    --secondary: 22 10% 15%;
+    --secondary-foreground: 30 18% 88%;
+    --muted: 22 10% 13%;
+    --muted-foreground: 28 10% 63%;
+    --accent: 20 60% 16%;
+    --accent-foreground: 24 88% 74%;
     --destructive: 0 62% 48%;
-    --destructive-foreground: 36 30% 96%;
-    --border: 30 8% 18%;
-    --input: 30 8% 18%;
-    --ring: 38 55% 58%;
-    --gold: 38 60% 60%;
-    --gold-muted: 38 30% 42%;
+    --destructive-foreground: 30 30% 96%;
+    --border: 24 10% 17%;
+    --input: 24 10% 17%;
+    --ring: 22 90% 56%;
+    --brand: 24 92% 58%;
+    --brand-muted: 20 55% 40%;
   }
 }
 
@@ -79,10 +79,23 @@
     text-rendering: optimizeLegibility;
   }
   ::selection {
-    background: hsl(var(--gold) / 0.25);
+    background: hsl(var(--brand) / 0.25);
   }
   :focus-visible {
     @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
   }
 }
 
@@ -91,7 +104,7 @@
   .bg-grain {
     background-image: radial-gradient(
       circle at 50% 0%,
-      hsl(38 40% 30% / 0.12),
+      hsl(22 80% 40% / 0.14),
       transparent 60%
     );
   }
@@ -99,7 +112,7 @@
     @apply py-20 md:py-28 lg:py-32;
   }
   .eyebrow {
-    @apply text-xs font-medium uppercase tracking-[0.2em] text-gold;
+    @apply text-xs font-medium uppercase tracking-[0.2em] text-brand;
   }
 
   /* Tiptap / rich-text rendered content */
@@ -116,7 +129,7 @@
     @apply my-4;
   }
   .prose-church a {
-    @apply text-gold underline underline-offset-4 hover:text-primary;
+    @apply text-brand underline underline-offset-4 hover:text-primary;
   }
   .prose-church ul {
     @apply my-4 list-disc space-y-2 pl-6;
@@ -125,6 +138,6 @@
     @apply my-4 list-decimal space-y-2 pl-6;
   }
   .prose-church blockquote {
-    @apply my-6 border-l-2 border-gold pl-6 text-xl italic text-foreground/80;
+    @apply my-6 border-l-2 border-brand pl-6 text-xl italic text-foreground/80;
   }
 }

@@ -35,13 +35,13 @@ export default async function LoginPage({
       </CardContent>
       <CardFooter className="flex flex-col gap-2 text-center text-sm text-muted-foreground">
         <p>
-          <Link href="/forgot-password" className="text-gold hover:underline">
+          <Link href="/forgot-password" className="text-brand hover:underline">
             Forgot your password?
           </Link>
         </p>
         <p>
           New here?{' '}
-          <Link href="/register" className="text-gold hover:underline">
+          <Link href="/register" className="text-brand hover:underline">
             Create an account
           </Link>
         </p>

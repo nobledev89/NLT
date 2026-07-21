@@ -121,13 +121,13 @@ export default async function AdminOverview({
           const Icon = s.icon;
           return (
             <Link key={s.label} href={s.href}>
-              <Card className="transition-colors hover:border-gold/40">
+              <Card className="transition-colors hover:border-brand/40">
                 <CardContent className="flex items-center justify-between py-6">
                   <div>
                     <p className="text-sm text-muted-foreground">{s.label}</p>
                     <p className="mt-1 text-3xl font-semibold">{s.value}</p>
                   </div>
-                  <Icon className="h-8 w-8 text-gold/70" />
+                  <Icon className="h-8 w-8 text-brand/70" />
                 </CardContent>
               </Card>
             </Link>

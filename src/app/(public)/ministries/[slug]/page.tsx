@@ -113,7 +113,7 @@ export default async function MinistryDetailPage({
               <dl className="space-y-4 text-sm">
                 {ministry.leader_name && (
                   <div className="flex gap-3">
-                    <User className="h-5 w-5 shrink-0 text-gold" />
+                    <User className="h-5 w-5 shrink-0 text-brand" />
                     <div>
                       <dt className="text-muted-foreground">Led by</dt>
                       <dd className="font-medium">{ministry.leader_name}</dd>
@@ -125,7 +125,7 @@ export default async function MinistryDetailPage({
                 )}
                 {ministry.meeting_schedule && (
                   <div className="flex gap-3">
-                    <Clock className="h-5 w-5 shrink-0 text-gold" />
+                    <Clock className="h-5 w-5 shrink-0 text-brand" />
                     <div>
                       <dt className="text-muted-foreground">Meets</dt>
                       <dd className="font-medium">{ministry.meeting_schedule}</dd>
@@ -134,7 +134,7 @@ export default async function MinistryDetailPage({
                 )}
                 {ministry.location && (
                   <div className="flex gap-3">
-                    <MapPin className="h-5 w-5 shrink-0 text-gold" />
+                    <MapPin className="h-5 w-5 shrink-0 text-brand" />
                     <div>
                       <dt className="text-muted-foreground">Where</dt>
                       <dd className="font-medium">{ministry.location}</dd>

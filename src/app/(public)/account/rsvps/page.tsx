@@ -97,7 +97,7 @@ export default async function MyRsvpsPage() {
           <CardContent className="py-12 text-center text-muted-foreground">
             <p>You have no RSVPs yet.</p>
             <p className="mt-2 text-sm">
-              <Link href="/events" className="text-gold hover:underline">
+              <Link href="/events" className="text-brand hover:underline">
                 Browse upcoming events
               </Link>
             </p>
@@ -114,7 +114,7 @@ export default async function MyRsvpsPage() {
                       {rsvp.events?.slug ? (
                         <Link
                           href={`/events/${rsvp.events.slug}`}
-                          className="hover:text-gold"
+                          className="hover:text-brand"
                         >
                           {rsvp.events.title}
                         </Link>
@@ -156,7 +156,7 @@ export default async function MyRsvpsPage() {
                   <CardHeader>
                     <CardTitle className="truncate">
                       {group.event?.slug ? (
-                        <Link href={`/events/${group.event.slug}`} className="hover:text-gold">
+                        <Link href={`/events/${group.event.slug}`} className="hover:text-brand">
                           {group.event.title}
                         </Link>
                       ) : (

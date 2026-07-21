@@ -56,10 +56,10 @@ const config: Config = {
           DEFAULT: 'hsl(var(--card))',
           foreground: 'hsl(var(--card-foreground))',
         },
-        // Brand: warm gold accent on deep charcoal
-        gold: {
-          DEFAULT: 'hsl(var(--gold))',
-          muted: 'hsl(var(--gold-muted))',
+        // Brand: warm ember-orange accent on near-black charcoal
+        brand: {
+          DEFAULT: 'hsl(var(--brand))',
+          muted: 'hsl(var(--brand-muted))',
         },
       },
       borderRadius: {

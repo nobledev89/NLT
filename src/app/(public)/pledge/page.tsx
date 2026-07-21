@@ -110,7 +110,7 @@ export default async function PledgePage() {
                         <div className="space-y-1.5">
                           <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
                             <div
-                              className="h-full rounded-full bg-gold transition-all"
+                              className="h-full rounded-full bg-brand transition-all"
                               style={{ width: `${pct}%` }}
                             />
                           </div>

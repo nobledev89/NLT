@@ -25,7 +25,7 @@ const DEFAULTS: SiteSettings = {
     churchName: 'New Life Tagum',
     tagline: 'A welcoming family of faith in the heart of Tagum.',
     logoUrl: null,
-    accentColor: 'gold',
+    accentColor: 'brand',
   },
   contact: {
     address: '1489 Manuel B. Suaybaguio Sr. St, Tagum, Davao del Norte',

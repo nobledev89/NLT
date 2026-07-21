@@ -87,7 +87,7 @@ export default async function MerchPage() {
                           {item.availability_label && <Badge variant="outline">{item.availability_label}</Badge>}
                         </div>
                         <h2 className="text-xl font-semibold">{item.title}</h2>
-                        {item.price_display && <p className="font-medium text-gold">{item.price_display}</p>}
+                        {item.price_display && <p className="font-medium text-brand">{item.price_display}</p>}
                       </div>
                       {item.description_html && <RichText html={item.description_html} />}
                       {item.external_url ? (

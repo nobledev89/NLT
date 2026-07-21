@@ -5,6 +5,7 @@ import { getSiteSettings } from '@/lib/settings';
 import { absoluteUrl } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 
 export const revalidate = 60;
@@ -48,22 +49,25 @@ function StaticHome() {
   return (
     <>
       <section className="relative isolate overflow-hidden border-b border-border/60">
-        <div className="absolute inset-0 -z-10 bg-gradient-to-b from-secondary/40 via-background to-background" />
-        <div className="container py-24 md:py-32">
-          <div className="max-w-3xl space-y-6">
+        {/* Layered ember wash over near-black */}
+        <div className="absolute inset-0 -z-10 bg-gradient-to-b from-secondary/30 via-background to-background" />
+        <div className="absolute inset-0 -z-10 bg-grain" />
+        <div className="absolute -right-24 top-0 -z-10 h-[36rem] w-[36rem] rounded-full bg-primary/10 blur-3xl" />
+        <div className="container flex min-h-[64vh] flex-col justify-center py-24 md:min-h-[72vh] md:py-32">
+          <div className="max-w-3xl space-y-6 animate-fade-in">
             <p className="eyebrow">New Life Tagum</p>
-            <h1 className="text-display font-serif font-medium">
+            <h1 className="text-display-lg font-serif font-medium">
               A welcoming family of faith in Tagum.
             </h1>
-            <p className="text-lg leading-relaxed text-foreground/70">
+            <p className="max-w-2xl text-lg leading-relaxed text-foreground/75 md:text-xl">
               Join us for worship, connect with a ministry, or take your next
               step with our church community.
             </p>
-            <div className="flex flex-wrap gap-3">
-              <Button asChild>
+            <div className="flex flex-wrap gap-3 pt-2">
+              <Button asChild size="lg">
                 <Link href="/get-connected">Get Connected</Link>
               </Button>
-              <Button asChild variant="secondary">
+              <Button asChild size="lg" variant="outline">
                 <Link href="/services">Service Times</Link>
               </Button>
             </div>
@@ -91,11 +95,15 @@ function StaticHome() {
             },
           ].map((item) => (
             <Link key={item.href} href={item.href} className="group">
-              <Card className="h-full p-6 transition-colors group-hover:border-gold/40">
+              <Card className="h-full p-6 transition-all duration-200 group-hover:-translate-y-0.5 group-hover:border-brand/40 group-hover:shadow-lg group-hover:shadow-primary/5">
                 <h2 className="text-xl font-semibold">{item.title}</h2>
                 <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
                   {item.body}
                 </p>
+                <span className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-brand">
+                  Learn more{' '}
+                  <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
+                </span>
               </Card>
             </Link>
           ))}

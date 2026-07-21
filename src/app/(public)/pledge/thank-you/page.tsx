@@ -13,8 +13,8 @@ export default function PledgeThankYouPage() {
   return (
     <section className="section">
       <div className="container max-w-xl py-16 text-center">
-        <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-gold/15">
-          <CheckCircle2 className="h-9 w-9 text-gold" />
+        <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-brand/15">
+          <CheckCircle2 className="h-9 w-9 text-brand" />
         </div>
         <h1 className="text-4xl font-serif font-medium">Thank you for your generosity</h1>
         <p className="mt-4 text-lg text-foreground/70">

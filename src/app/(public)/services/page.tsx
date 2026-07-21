@@ -93,7 +93,7 @@ export default async function ServicesPage() {
       {live.isLive && liveUrl && (
         <section className="section">
           <div className="container">
-            <div className="rounded-3xl border border-gold/40 bg-gradient-to-br from-secondary/40 to-card p-6 md:p-8">
+            <div className="rounded-3xl border border-brand/40 bg-gradient-to-br from-secondary/40 to-card p-6 md:p-8">
               <div className="mb-5 flex flex-wrap items-center gap-3">
                 <Badge variant="danger" className="gap-1.5">
                   <Radio className="h-3.5 w-3.5 animate-pulse" /> Live now

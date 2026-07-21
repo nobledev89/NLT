@@ -29,17 +29,17 @@ export async function SiteFooter() {
           </p>
           <div className="flex gap-3 pt-2">
             {socials.facebook && (
-              <a href={socials.facebook} aria-label="Facebook" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-gold">
+              <a href={socials.facebook} aria-label="Facebook" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-brand">
                 <Facebook className="h-5 w-5" />
               </a>
             )}
             {socials.youtube && (
-              <a href={socials.youtube} aria-label="YouTube" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-gold">
+              <a href={socials.youtube} aria-label="YouTube" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-brand">
                 <Youtube className="h-5 w-5" />
               </a>
             )}
             {socials.instagram && (
-              <a href={socials.instagram} aria-label="Instagram" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-gold">
+              <a href={socials.instagram} aria-label="Instagram" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-brand">
                 <Instagram className="h-5 w-5" />
               </a>
             )}
@@ -49,17 +49,17 @@ export async function SiteFooter() {
         <div className="space-y-3">
           <p className="text-sm font-semibold uppercase tracking-widest text-foreground/70">Visit</p>
           <p className="flex items-start gap-2 text-sm text-muted-foreground">
-            <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-gold" />
+            <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-brand" />
             {contact.address}
           </p>
           {contact.email && (
             <p className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Mail className="h-4 w-4 shrink-0 text-gold" /> {contact.email}
+              <Mail className="h-4 w-4 shrink-0 text-brand" /> {contact.email}
             </p>
           )}
           {contact.phone && (
             <p className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Phone className="h-4 w-4 shrink-0 text-gold" /> {contact.phone}
+              <Phone className="h-4 w-4 shrink-0 text-brand" /> {contact.phone}
             </p>
           )}
           <p className="pt-2 text-sm text-muted-foreground">{serviceSummary.text}</p>

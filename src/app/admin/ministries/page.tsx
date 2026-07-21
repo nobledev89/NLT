@@ -53,7 +53,7 @@ export default async function MinistriesPage() {
                   {ministries.map((m) => (
                     <tr key={m.id} className="border-b border-border transition-colors hover:bg-secondary/40">
                       <td className="px-4 py-3">
-                        <Link href={`/admin/ministries/${m.id}`} className="font-medium hover:text-gold">
+                        <Link href={`/admin/ministries/${m.id}`} className="font-medium hover:text-brand">
                           {m.name}
                         </Link>
                         {m.is_placeholder && <Badge variant="warning" className="ml-2">Placeholder</Badge>}

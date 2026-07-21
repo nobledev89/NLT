@@ -120,7 +120,7 @@ export function SeatBooking({
                   className={cn(
                     'flex flex-1 items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-medium transition-colors sm:flex-none',
                     active
-                      ? 'bg-gold text-background shadow-sm'
+                      ? 'bg-brand text-background shadow-sm'
                       : 'text-muted-foreground hover:text-foreground'
                   )}
                 >
@@ -178,7 +178,7 @@ export function SeatBooking({
                                   st === 'available' &&
                                     cn(SECTION_STYLE[section.id], atLimit && 'cursor-not-allowed opacity-50'),
                                   st === 'selected' &&
-                                    'border-gold bg-gold font-semibold text-background',
+                                    'border-brand bg-brand font-semibold text-background',
                                   st === 'booked' &&
                                     'cursor-not-allowed border-transparent bg-muted/40 text-muted-foreground/40 line-through'
                                 )}
@@ -201,7 +201,7 @@ export function SeatBooking({
         <div className="flex flex-wrap gap-4 text-xs text-muted-foreground">
           <LegendSwatch className="border-sky-500/40 bg-sky-500/10" label="Section A" />
           <LegendSwatch className="border-amber-500/40 bg-amber-500/10" label="Section B" />
-          <LegendSwatch className="border-gold bg-gold" label="Selected" />
+          <LegendSwatch className="border-brand bg-brand" label="Selected" />
           <LegendSwatch className="border-transparent bg-muted/40" label="Reserved" />
         </div>
       </div>
@@ -244,7 +244,7 @@ export function SeatBooking({
                   <button
                     type="button"
                     onClick={() => toggle(label)}
-                    className="inline-flex items-center gap-1 rounded-full border border-gold/50 bg-gold/15 px-2.5 py-1 text-xs font-medium text-gold hover:bg-gold/25"
+                    className="inline-flex items-center gap-1 rounded-full border border-brand/50 bg-brand/15 px-2.5 py-1 text-xs font-medium text-brand hover:bg-brand/25"
                     aria-label={`Remove seat ${label}`}
                   >
                     {label} <span aria-hidden>×</span>
@@ -295,7 +295,7 @@ export function SeatBooking({
           </SubmitButton>
 
           <p className="flex items-start gap-2 text-xs text-muted-foreground">
-            <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-gold" />
+            <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-brand" />
             Online payment is coming soon — for now your seat is held and settled at the venue.
           </p>
         </form>
@@ -306,7 +306,7 @@ export function SeatBooking({
         <div className="fixed inset-x-0 bottom-0 z-30 border-t border-border bg-background/95 p-3 backdrop-blur lg:hidden">
           <a
             href="#booking-form"
-            className="flex items-center justify-between gap-3 rounded-xl bg-gold px-4 py-3 text-sm font-semibold text-background"
+            className="flex items-center justify-between gap-3 rounded-xl bg-brand px-4 py-3 text-sm font-semibold text-background"
           >
             <span>
               {selectedList.length} {selectedList.length === 1 ? 'seat' : 'seats'} ·{' '}

@@ -142,7 +142,7 @@ export function CtaBannerBlock({ data }: { data: CtaBannerData }) {
   return (
     <section className="section">
       <div className="container">
-        <div className="relative overflow-hidden rounded-3xl border border-gold/20 bg-gradient-to-br from-accent/40 via-card to-card px-8 py-16 text-center md:px-16 md:py-20">
+        <div className="relative overflow-hidden rounded-3xl border border-brand/20 bg-gradient-to-br from-accent/40 via-card to-card px-8 py-16 text-center md:px-16 md:py-20">
           <div className="absolute inset-0 bg-grain" />
           <div className="relative mx-auto max-w-2xl space-y-5">
             <h2 className="text-headline font-serif font-medium">{data.heading}</h2>
@@ -177,7 +177,7 @@ export function FeatureCardsBlock({ data }: { data: FeatureCardsData }) {
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {data.cards.map((c, i) => {
             const inner = (
-              <Card className="h-full p-6 transition-colors hover:border-gold/40">
+              <Card className="h-full p-6 transition-colors hover:border-brand/40">
                 <h3 className="text-lg font-semibold">{c.title}</h3>
                 <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{c.body}</p>
               </Card>
@@ -198,7 +198,7 @@ export function QuoteBlock({ data }: { data: QuoteData }) {
   return (
     <section className="section">
       <div className="container max-w-3xl text-center">
-        <QuoteIcon className="mx-auto mb-6 h-10 w-10 text-gold/60" />
+        <QuoteIcon className="mx-auto mb-6 h-10 w-10 text-brand/60" />
         <blockquote className="font-serif text-2xl leading-relaxed text-foreground/90 md:text-3xl">
           “{data.quote}”
         </blockquote>
@@ -224,7 +224,7 @@ export function MapLocationBlock({ data }: { data: MapLocationData }) {
           <div className="space-y-4">
             {data.heading && <h2 className="text-headline font-serif font-medium">{data.heading}</h2>}
             <p className="flex items-start gap-3 text-lg text-foreground/80">
-              <MapPin className="mt-1 h-5 w-5 shrink-0 text-gold" />
+              <MapPin className="mt-1 h-5 w-5 shrink-0 text-brand" />
               {data.addressLine}
             </p>
             <Button asChild>
@@ -256,7 +256,7 @@ export function FaqBlock({ data }: { data: FaqData }) {
             <details key={i} className="group p-6">
               <summary className="flex cursor-pointer list-none items-center justify-between font-medium">
                 {item.question}
-                <span className="ml-4 text-gold transition-transform group-open:rotate-45">+</span>
+                <span className="ml-4 text-brand transition-transform group-open:rotate-45">+</span>
               </summary>
               <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{item.answer}</p>
             </details>

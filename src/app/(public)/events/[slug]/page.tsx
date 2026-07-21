@@ -142,7 +142,7 @@ export default async function EventDetailPage({
 
               <dl className="grid gap-3 text-sm">
                 <div className="flex items-center gap-3">
-                  <CalendarDays className="h-5 w-5 text-gold" />
+                  <CalendarDays className="h-5 w-5 text-brand" />
                   <span>
                     {formatDateTime(event.start_at)}
                     {event.end_at ? ` – ${formatDateTime(event.end_at)}` : ''}
@@ -150,7 +150,7 @@ export default async function EventDetailPage({
                 </div>
                 {(event.venue || event.address) && (
                   <div className="flex items-center gap-3">
-                    <MapPin className="h-5 w-5 text-gold" />
+                    <MapPin className="h-5 w-5 text-brand" />
                     <span>
                       {event.venue}
                       {event.venue && event.address ? ', ' : ''}
@@ -162,7 +162,7 @@ export default async function EventDetailPage({
                             href={mapsUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-gold underline-offset-4 hover:underline"
+                            className="text-brand underline-offset-4 hover:underline"
                           >
                             Get directions
                           </a>
@@ -173,13 +173,13 @@ export default async function EventDetailPage({
                 )}
                 {event.organizer && (
                   <div className="flex items-center gap-3">
-                    <User className="h-5 w-5 text-gold" />
+                    <User className="h-5 w-5 text-brand" />
                     <span>Hosted by {event.organizer}</span>
                   </div>
                 )}
                 {event.category && (
                   <div className="flex items-center gap-3">
-                    <Tag className="h-5 w-5 text-gold" />
+                    <Tag className="h-5 w-5 text-brand" />
                     <span className="capitalize">{event.category}</span>
                   </div>
                 )}
@@ -193,7 +193,7 @@ export default async function EventDetailPage({
           {(event.seating_enabled || event.rsvp_enabled) && (
             <aside className="space-y-6 lg:sticky lg:top-24 lg:self-start">
               {event.seating_enabled && (
-                <div className="rounded-2xl border border-gold/40 bg-gold/5 p-6">
+                <div className="rounded-2xl border border-brand/40 bg-brand/5 p-6">
                   <h2 className="text-lg font-serif font-medium">Reserve your seat</h2>
                   <p className="mt-1 text-sm text-muted-foreground">
                     Pick your seat from the venue map. Online payment is coming soon — your seat is

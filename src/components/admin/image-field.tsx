@@ -125,7 +125,7 @@ export function ImageField({
                           setUrl(m.url);
                           setOpen(false);
                         }}
-                        className="relative aspect-square overflow-hidden rounded-md border border-border hover:border-gold"
+                        className="relative aspect-square overflow-hidden rounded-md border border-border hover:border-brand"
                       >
                         <Image src={m.url} alt={m.alt_text ?? m.file_name} fill className="object-cover" />
                       </button>

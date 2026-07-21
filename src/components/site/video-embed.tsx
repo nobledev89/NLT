@@ -44,7 +44,7 @@ export function VideoEmbed({
           <div className="absolute inset-0 bg-gradient-to-br from-secondary to-background" />
         )}
         <span className="absolute inset-0 bg-black/30 transition-colors group-hover:bg-black/40" />
-        <span className="relative flex h-16 w-16 items-center justify-center rounded-full bg-gold text-background shadow-lg transition-transform group-hover:scale-110">
+        <span className="relative flex h-16 w-16 items-center justify-center rounded-full bg-brand text-background shadow-lg transition-transform group-hover:scale-110">
           <Play className="h-7 w-7 translate-x-0.5 fill-current" />
         </span>
       </button>

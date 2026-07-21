@@ -108,7 +108,7 @@ export default async function CommentsPage({
                       </span>
                       <span className="text-muted-foreground">on</span>
                       {post ? (
-                        <Link href={`/blog/${post.slug}`} className="text-gold hover:underline" target="_blank">
+                        <Link href={`/blog/${post.slug}`} className="text-brand hover:underline" target="_blank">
                           {post.title}
                         </Link>
                       ) : (

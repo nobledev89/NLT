@@ -17,7 +17,7 @@ const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 
 export function EventCard({ event }: { event: EventRow }) {
   return (
     <Link href={`/events/${event.slug}`} className="group">
-      <Card className="h-full overflow-hidden transition-colors group-hover:border-gold/40">
+      <Card className="h-full overflow-hidden transition-all duration-300 group-hover:-translate-y-1 group-hover:border-brand/40 group-hover:shadow-xl group-hover:shadow-primary/5">
         <div className="relative aspect-[16/10] overflow-hidden bg-muted">
           {event.cover_image_url ? (
             <Image src={event.cover_image_url} alt={event.title} fill className="object-cover transition-transform duration-500 group-hover:scale-105" />
@@ -32,11 +32,11 @@ export function EventCard({ event }: { event: EventRow }) {
           {event.category && <p className="eyebrow">{event.category}</p>}
           <h3 className="text-lg font-semibold leading-tight">{event.title}</h3>
           <p className="flex items-center gap-2 text-sm text-muted-foreground">
-            <CalendarDays className="h-4 w-4 text-gold" /> {formatDateTime(event.start_at)}
+            <CalendarDays className="h-4 w-4 text-brand" /> {formatDateTime(event.start_at)}
           </p>
           {event.venue && (
             <p className="flex items-center gap-2 text-sm text-muted-foreground">
-              <MapPin className="h-4 w-4 text-gold" /> {event.venue}
+              <MapPin className="h-4 w-4 text-brand" /> {event.venue}
             </p>
           )}
         </div>
@@ -48,7 +48,7 @@ export function EventCard({ event }: { event: EventRow }) {
 export function PostCard({ post, featured = false }: { post: PostRow; featured?: boolean }) {
   return (
     <Link href={`/posts/${post.slug}`} className="group">
-      <Card className={`h-full overflow-hidden transition-colors group-hover:border-gold/40 ${featured ? 'lg:flex' : ''}`}>
+      <Card className={`h-full overflow-hidden transition-all duration-300 group-hover:-translate-y-1 group-hover:border-brand/40 group-hover:shadow-xl group-hover:shadow-primary/5 ${featured ? 'lg:flex' : ''}`}>
         <div className={`relative overflow-hidden bg-muted ${featured ? 'aspect-[16/10] lg:aspect-auto lg:w-1/2' : 'aspect-[16/10]'}`}>
           {post.featured_image_url ? (
             <Image src={post.featured_image_url} alt={post.title} fill className="object-cover transition-transform duration-500 group-hover:scale-105" />
@@ -62,7 +62,7 @@ export function PostCard({ post, featured = false }: { post: PostRow; featured?:
           <p className="text-xs text-muted-foreground">{formatDate(post.published_at)}</p>
           <h3 className={`font-semibold leading-tight ${featured ? 'text-2xl font-serif' : 'text-lg'}`}>{post.title}</h3>
           {post.excerpt && <p className="text-sm leading-relaxed text-muted-foreground">{truncate(post.excerpt, featured ? 220 : 120)}</p>}
-          <span className="inline-flex items-center gap-1 text-sm font-medium text-gold">
+          <span className="inline-flex items-center gap-1 text-sm font-medium text-brand">
             Read more <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
           </span>
         </div>
@@ -74,7 +74,7 @@ export function PostCard({ post, featured = false }: { post: PostRow; featured?:
 export function MinistryCard({ ministry }: { ministry: MinistryRow }) {
   return (
     <Link href={`/ministries/${ministry.slug}`} className="group">
-      <Card className="h-full overflow-hidden transition-colors group-hover:border-gold/40">
+      <Card className="h-full overflow-hidden transition-all duration-300 group-hover:-translate-y-1 group-hover:border-brand/40 group-hover:shadow-xl group-hover:shadow-primary/5">
         <div className="relative aspect-[4/3] overflow-hidden bg-muted">
           {ministry.image_url ? (
             <Image src={ministry.image_url} alt={ministry.name} fill className="object-cover transition-transform duration-500 group-hover:scale-105" />
@@ -115,7 +115,7 @@ export function ScheduleList({ schedules }: { schedules: ServiceScheduleRow[] })
             </p>
           </div>
           <div className="text-right">
-            <p className="font-semibold text-gold">
+            <p className="font-semibold text-brand">
               {formatTime(s.start_time)}
               {s.end_time ? ` – ${formatTime(s.end_time)}` : ''}
             </p>

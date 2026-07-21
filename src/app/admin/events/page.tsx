@@ -56,7 +56,7 @@ export default async function EventsPage() {
                   {events.map((e) => (
                     <tr key={e.id} className="border-b border-border transition-colors hover:bg-secondary/40">
                       <td className="px-4 py-3">
-                        <Link href={`/admin/events/${e.id}`} className="font-medium hover:text-gold">
+                        <Link href={`/admin/events/${e.id}`} className="font-medium hover:text-brand">
                           {e.title}
                         </Link>
                         {e.is_featured && <Badge variant="warning" className="ml-2">Featured</Badge>}
