@@ -32,7 +32,9 @@
     --destructive-foreground: 30 30% 96%;
 
     --border: 24 10% 17%;
-    --input: 24 10% 17%;
+    /* Form-control borders sit on near-black surfaces; keep them lighter than
+       --border so inputs stay perceivable (WCAG 1.4.11 non-text contrast). */
+    --input: 24 10% 32%;
     --ring: 22 90% 56%;
 
     --brand: 24 92% 58%;
@@ -59,7 +61,7 @@
     --destructive: 0 62% 48%;
     --destructive-foreground: 30 30% 96%;
     --border: 24 10% 17%;
-    --input: 24 10% 17%;
+    --input: 24 10% 32%;
     --ring: 22 90% 56%;
     --brand: 24 92% 58%;
     --brand-muted: 20 55% 40%;

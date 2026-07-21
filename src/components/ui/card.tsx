@@ -22,9 +22,15 @@ const CardHeader = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDiv
 );
 CardHeader.displayName = 'CardHeader';
 
-const CardTitle = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLHeadingElement>>(
-  ({ className, ...props }, ref) => (
-    <h3 ref={ref} className={cn('text-lg font-semibold leading-tight tracking-tight', className)} {...props} />
+type CardTitleProps = React.HTMLAttributes<HTMLHeadingElement> & {
+  /** Heading level to render. Defaults to h3; set to h1 when the card holds a
+   *  page's primary heading (e.g. auth screens) so the document outline is sound. */
+  as?: 'h1' | 'h2' | 'h3' | 'h4';
+};
+
+const CardTitle = React.forwardRef<HTMLHeadingElement, CardTitleProps>(
+  ({ className, as: Comp = 'h3', ...props }, ref) => (
+    <Comp ref={ref} className={cn('text-lg font-semibold leading-tight tracking-tight', className)} {...props} />
   )
 );
 CardTitle.displayName = 'CardTitle';

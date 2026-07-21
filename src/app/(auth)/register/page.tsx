@@ -19,7 +19,7 @@ export default function RegisterPage() {
   return (
     <Card>
       <CardHeader className="text-center">
-        <CardTitle className="font-serif text-2xl">Create your account</CardTitle>
+        <CardTitle as="h1" className="font-serif text-2xl">Create your account</CardTitle>
         <CardDescription>Join the New Life Tagum community.</CardDescription>
       </CardHeader>
       <CardContent>

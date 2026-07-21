@@ -92,7 +92,7 @@ export async function SiteFooter() {
       <div className="border-t border-border">
         <div className="container flex flex-col items-center justify-between gap-3 py-6 text-xs text-muted-foreground sm:flex-row">
           <p>© {year} {branding.churchName}. All rights reserved.</p>
-          <Link href="/admin" className="text-muted-foreground/60 transition-colors hover:text-foreground">
+          <Link href="/admin" className="text-muted-foreground transition-colors hover:text-foreground">
             Admin
           </Link>
         </div>
