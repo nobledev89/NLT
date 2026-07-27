@@ -19,9 +19,9 @@ export async function SiteFooter() {
           <Image
             src="/logo-mark-white.png"
             alt={branding.churchName}
-            width={462}
-            height={120}
-            className="h-11 w-auto"
+            width={598}
+            height={354}
+            className="h-10 w-auto"
           />
           <p className="font-serif text-xl">{branding.churchName}</p>
           <p className="max-w-xs text-sm leading-relaxed text-muted-foreground">

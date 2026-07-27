@@ -1,11 +1,13 @@
 import type { Metadata } from 'next';
 import { getSiteSettings } from '@/lib/settings';
-import { absoluteUrl, cn } from '@/lib/utils';
+import { createClient } from '@/lib/supabase/server';
+import { absoluteUrl, cn, formatDateTime } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, CalendarDays, MapPin, Ticket } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
+import type { EventRow } from '@/types/database';
 
 export const revalidate = 60;
 
@@ -22,14 +24,24 @@ export const metadata: Metadata = {
  * Any slot left null/empty renders a themed placeholder (or the whole section
  * is hidden), so the page always looks finished.
  *
- *   hero    — full-bleed, 16:9 landscape ....... ~2560×1440  (public/hero.png)
- *   welcome — beside the intro text, 4:3 ....... ~1600×1200  (public/home/…)
- *   band    — full-width band, 21:8 wide ....... ~2560×1000  (public/home/…)
- *   gallery — square tiles, 1:1 ................ ~1000×1000  (best in 4s)
+ *   hero          — full-bleed, 16:9 landscape .. ~2560×1440  (public/hero.png)
+ *   welcome       — beside the intro text ....... set `aspect` to match the file
+ *   planVisit     — backdrop of the closing CTA . wide & dark, ~21:9
+ *   featuredEvent — event poster, spans the card . wide 16:9, ~1600×900
+ *   band          — full-width band, 21:8 wide .. ~2560×1000  (public/home/…)
+ *   gallery       — square tiles, 1:1 ........... ~1000×1000  (best in 4s)
  * ------------------------------------------------------------------------- */
 const HOME_IMAGES = {
   hero: { src: '/hero.png', position: '75% center' as string | undefined },
-  welcome: null as string | null, // e.g. '/home/welcome.jpg'
+  welcome: {
+    // 1212×977 collage — `aspect` matches the file so nothing gets cropped.
+    src: '/home/who-we-are.png' as string | null,
+    aspect: 'aspect-[1212/977]',
+  },
+  planVisit: '/home/plan-visit.png' as string | null,
+  // Fallback art for the featured-event band. The event's own
+  // `cover_image_url` from the CMS wins over this when one is set.
+  featuredEvent: '/home/accelerate.png' as string | null,
   band: null as string | null, // e.g. '/home/band.jpg'
   gallery: [] as { src: string; alt: string }[],
   // e.g. [{ src: '/home/gallery-1.jpg', alt: 'Sunday worship' }, …]
@@ -69,8 +81,46 @@ function ImageSlot({
   );
 }
 
+/**
+ * The next upcoming event flagged `is_featured` in the CMS — the anniversary
+ * today. Returns null when nothing is featured, and the section is skipped.
+ *
+ * Swallows errors the same way `getSiteSettings` does: the homepage still
+ * renders when Supabase is unconfigured or unreachable, minus this section.
+ */
+async function getFeaturedEvent(): Promise<EventRow | null> {
+  try {
+    const supabase = await createClient();
+    const { data } = await supabase
+      .from('events')
+      .select('*')
+      .eq('status', 'published')
+      .eq('is_public', true)
+      .eq('is_featured', true)
+      .is('deleted_at', null)
+      .gte('start_at', new Date().toISOString())
+      .order('start_at', { ascending: true })
+      .limit(1);
+    return ((data ?? []) as EventRow[])[0] ?? null;
+  } catch {
+    return null;
+  }
+}
+
 export default async function HomePage() {
-  const settings = await getSiteSettings();
+  const [settings, featuredEvent] = await Promise.all([
+    getSiteSettings(),
+    getFeaturedEvent(),
+  ]);
+
+  const featuredBlurb = featuredEvent?.description_html
+    ? featuredEvent.description_html
+        .replace(/<[^>]+>/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim()
+        .slice(0, 200)
+    : null;
+
   const orgJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Church',
@@ -95,14 +145,22 @@ export default async function HomePage() {
 
       {/* Hero -------------------------------------------------------------- */}
       <section className="relative isolate overflow-hidden border-b border-border/60">
-        <ImageSlot
-          src={HOME_IMAGES.hero.src}
-          position={HOME_IMAGES.hero.position}
-          sizes="100vw"
-          priority
-        />
-        <div className="absolute inset-0 -z-10 bg-gradient-to-t from-background via-background/70 to-background/40" />
-        <div className="absolute inset-0 -z-10 bg-gradient-to-r from-background/85 via-background/40 to-transparent" />
+        {/* Backdrop — photo and its scrims share one layer so the scrims sit
+            *over* the photo and the whole stack sits under the copy. Keep the
+            image inside this wrapper: as a bare sibling it paints above the
+            text (positioned z-auto beats both -z-10 and in-flow content). */}
+        <div className="absolute inset-0 -z-10">
+          <ImageSlot
+            src={HOME_IMAGES.hero.src}
+            position={HOME_IMAGES.hero.position}
+            sizes="100vw"
+            priority
+          />
+          {/* Narrow screens crop in tight on the subject, so they need a much
+              heavier scrim than desktop to keep the headline readable. */}
+          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/80 to-background/55 md:via-background/70 md:to-background/40" />
+          <div className="absolute inset-0 bg-gradient-to-r from-background/90 via-background/70 to-background/40 md:from-background/85 md:via-background/40 md:to-transparent" />
+        </div>
         <div className="container flex min-h-[64vh] flex-col justify-center py-24 md:min-h-[72vh] md:py-32">
           <div className="max-w-3xl space-y-6 animate-fade-in">
             <p className="eyebrow">New Life Tagum</p>
@@ -117,7 +175,14 @@ export default async function HomePage() {
               <Button asChild size="lg">
                 <Link href="/get-connected">Get Connected</Link>
               </Button>
-              <Button asChild size="lg" variant="outline">
+              {/* Sits on the photo, so the transparent outline style needs its
+                  own backdrop to stay legible. */}
+              <Button
+                asChild
+                size="lg"
+                variant="outline"
+                className="border-foreground/30 bg-background/50 backdrop-blur-sm hover:bg-background/70"
+              >
                 <Link href="/services">Service Times</Link>
               </Button>
             </div>
@@ -161,12 +226,85 @@ export default async function HomePage() {
         </div>
       </section>
 
+      {/* Featured event — the anniversary while it's upcoming ------------- */}
+      {featuredEvent && (
+        <section className="section border-t border-border/60 pt-0">
+          <div className="container">
+            <div className="overflow-hidden rounded-3xl border border-brand/30 bg-gradient-to-br from-brand/10 via-card/50 to-background">
+              {/* The poster is a wide title card with centred type, so it spans
+                  the full width — a side column would crop the wordmark.
+                  Desktop trims top and bottom only, which is safe. */}
+              <div className="relative aspect-[16/9] w-full border-b border-brand/20 md:aspect-[2/1]">
+                <ImageSlot
+                  src={featuredEvent.cover_image_url ?? HOME_IMAGES.featuredEvent}
+                  alt={featuredEvent.title}
+                  sizes="(min-width: 1280px) 1152px, 100vw"
+                />
+              </div>
+              <div className="space-y-4 p-8 md:p-10">
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-brand/40 bg-brand/10 px-3 py-1 text-xs font-medium text-brand">
+                  <Ticket className="h-3.5 w-3.5" />
+                  {featuredEvent.category ?? 'Featured event'}
+                </span>
+                <h2 className="text-headline font-serif font-medium">
+                  {featuredEvent.title}
+                </h2>
+                {featuredBlurb && (
+                  <p className="leading-relaxed text-muted-foreground">
+                    {featuredBlurb}
+                  </p>
+                )}
+                <div className="flex flex-wrap gap-x-5 gap-y-1 text-sm text-muted-foreground">
+                  <span className="flex items-center gap-1.5">
+                    <CalendarDays className="h-4 w-4 text-brand" />
+                    {formatDateTime(featuredEvent.start_at)}
+                  </span>
+                  {featuredEvent.venue && (
+                    <span className="flex items-center gap-1.5">
+                      <MapPin className="h-4 w-4 text-brand" />
+                      {featuredEvent.venue}
+                    </span>
+                  )}
+                </div>
+                <div className="flex flex-wrap gap-3 pt-2">
+                  {featuredEvent.seating_enabled ? (
+                    <>
+                      <Button asChild size="lg">
+                        <Link href={`/events/${featuredEvent.slug}/seats`}>
+                          Book your seat
+                        </Link>
+                      </Button>
+                      <Button asChild size="lg" variant="outline">
+                        <Link href={`/events/${featuredEvent.slug}`}>
+                          Event details
+                        </Link>
+                      </Button>
+                    </>
+                  ) : (
+                    <Button asChild size="lg">
+                      <Link href={`/events/${featuredEvent.slug}`}>
+                        Event details
+                      </Link>
+                    </Button>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* Welcome / who we are --------------------------------------------- */}
       <section className="section border-t border-border/60">
         <div className="container grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
-          <div className="relative aspect-[4/3] overflow-hidden rounded-2xl border border-border">
+          <div
+            className={cn(
+              'relative overflow-hidden rounded-2xl border border-border',
+              HOME_IMAGES.welcome.aspect
+            )}
+          >
             <ImageSlot
-              src={HOME_IMAGES.welcome}
+              src={HOME_IMAGES.welcome.src}
               alt="New Life Tagum gathered in worship"
               sizes="(min-width: 1024px) 45vw, 100vw"
             />
@@ -236,6 +374,20 @@ export default async function HomePage() {
       <section className="section">
         <div className="container">
           <div className="relative overflow-hidden rounded-3xl border border-brand/20 bg-gradient-to-br from-accent/40 via-card to-card px-8 py-16 text-center md:px-16 md:py-20">
+            {HOME_IMAGES.planVisit && (
+              <>
+                <Image
+                  src={HOME_IMAGES.planVisit}
+                  alt=""
+                  fill
+                  sizes="(min-width: 1280px) 1152px, 100vw"
+                  className="object-cover"
+                />
+                {/* Scrim — keeps the copy readable over the photo's bright
+                    highlights. Lower the opacity to let more image through. */}
+                <div className="absolute inset-0 bg-background/60" />
+              </>
+            )}
             <div className="absolute inset-0 bg-grain" />
             <div className="relative mx-auto max-w-2xl space-y-5">
               <h2 className="text-headline font-serif font-medium">

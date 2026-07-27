@@ -80,10 +80,10 @@ export function HeaderNav({
             <Image
               src="/logo-mark-white.png"
               alt={churchName}
-              width={462}
-              height={120}
+              width={598}
+              height={354}
               priority
-              className="h-9 w-auto"
+              className="h-8 w-auto"
             />
           )}
           <span className="hidden font-serif text-lg font-medium tracking-tight text-foreground sm:inline">
