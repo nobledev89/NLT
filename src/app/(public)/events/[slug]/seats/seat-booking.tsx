@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { useActionState } from 'react';
-import { CheckCircle2, Sun, Moon } from 'lucide-react';
+import { Sun, Moon, ZoomIn, ZoomOut } from 'lucide-react';
 import { submitSeatBookingAction } from '@/app/actions/seat-bookings';
 import { initialActionState } from '@/lib/form';
 import {
@@ -27,6 +27,17 @@ const SECTION_STYLE: Record<SeatSection['id'], string> = {
 
 const SESSION_ICON: Record<ServiceSession, typeof Sun> = { morning: Sun, evening: Moon };
 
+/**
+ * Seat size. "Fit" shrinks seats until both sections — 14 across, plus the
+ * centre aisle — fit the viewport, so a phone still shows the hall's true
+ * left/right layout in one view. "Zoomed" pins seats to a comfortable tap
+ * target and lets the map scroll sideways instead.
+ */
+// 14 seats across (7 per section), 12 in-row gaps, plus ~2.75rem of page
+// padding and centre aisle.
+const SEAT_SIZE_FIT = 'min(2.4rem, calc((100vw - 2.75rem - 12 * var(--seat-gap)) / 14))';
+const SEAT_SIZE_ZOOMED = '2.75rem';
+
 export function SeatBooking({
   eventId,
   bookedBySession,
@@ -46,6 +57,7 @@ export function SeatBooking({
     evening: new Set(bookedBySession.evening),
   }));
   const [selected, setSelected] = React.useState<Set<string>>(() => new Set());
+  const [zoomed, setZoomed] = React.useState(false);
 
   // Keep in sync if the server re-renders with fresh reservations.
   React.useEffect(() => {
@@ -139,23 +151,52 @@ export function SeatBooking({
           Stage
         </div>
 
-        <div className="-mx-4 overflow-x-auto px-4 pb-2 sm:mx-0 sm:px-0 [--seat:2rem] sm:[--seat:2.4rem]">
-          <div className="flex flex-col items-center gap-10 sm:w-max sm:flex-row sm:items-start sm:justify-center sm:gap-8">
-            {SEAT_MAP.map((section) => (
-              <section key={section.id} className="space-y-3">
+        {/* Zoom control — only useful where seats are shrunk to fit (phones). */}
+        <div className="flex items-center justify-between gap-3 sm:hidden">
+          <p className="text-xs text-muted-foreground">
+            {zoomed ? 'Swipe the map sideways to see both sections.' : 'Both sections shown, as seen facing the stage.'}
+          </p>
+          <button
+            type="button"
+            onClick={() => setZoomed((z) => !z)}
+            aria-pressed={zoomed}
+            className="inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-border bg-card/40 px-3 py-1.5 text-xs font-medium text-foreground"
+          >
+            {zoomed ? <ZoomOut className="h-3.5 w-3.5" /> : <ZoomIn className="h-3.5 w-3.5" />}
+            {zoomed ? 'Fit to screen' : 'Zoom in'}
+          </button>
+        </div>
+
+        <div
+          className="-mx-5 overflow-x-auto px-2 pb-2 sm:mx-0 sm:px-0 [--seat-gap:0.25rem] sm:[--seat-gap:0.375rem]"
+          style={{ ['--seat' as string]: zoomed ? SEAT_SIZE_ZOOMED : SEAT_SIZE_FIT }}
+        >
+          <div className="mx-auto flex w-max items-start gap-3 sm:gap-8">
+            {SEAT_MAP.map((section, si) => (
+              // The dashed left edge on the second section draws the centre aisle.
+              <section
+                key={section.id}
+                className={cn(
+                  'space-y-3',
+                  si > 0 && 'border-l border-dashed border-border/70 pl-3 sm:pl-8'
+                )}
+              >
                 <p className="text-center text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                   {section.title}
+                  <span className="ml-1 font-normal normal-case tracking-normal opacity-70">
+                    ({section.side})
+                  </span>
                 </p>
-                <div className="space-y-1.5">
+                <div className="space-y-[var(--seat-gap)]">
                   {Array.from({ length: section.topSpacerRows }).map((_, i) => (
                     <div key={`spacer-${i}`} aria-hidden className="h-[var(--seat)]" />
                   ))}
                   {section.blocks.map((block, bi) => (
-                    <div key={bi} className={cn('space-y-1.5', bi > 0 && 'pt-4')}>
+                    <div key={bi} className={cn('space-y-[var(--seat-gap)]', bi > 0 && 'pt-4')}>
                       {block.rows.map((row, ri) => (
                         <div
                           key={ri}
-                          className="grid gap-1.5 [grid-template-columns:repeat(var(--cols),var(--seat))]"
+                          className="grid gap-[var(--seat-gap)] [grid-template-columns:repeat(var(--cols),var(--seat))]"
                           style={{ ['--cols' as string]: block.gridCols }}
                         >
                           {row.map((seat) => {
@@ -293,11 +334,6 @@ export function SeatBooking({
               ? `Reserve ${selectedList.length} ${selectedList.length === 1 ? 'seat' : 'seats'}`
               : 'Reserve seats'}
           </SubmitButton>
-
-          <p className="flex items-start gap-2 text-xs text-muted-foreground">
-            <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-brand" />
-            Online payment is coming soon — for now your seat is held and settled at the venue.
-          </p>
         </form>
       </aside>
 

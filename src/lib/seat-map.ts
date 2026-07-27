@@ -3,10 +3,16 @@
  * Anniversary). The map itself is fixed configuration — only the *bookings*
  * live in the database (public.event_seat_bookings), keyed by seat label.
  *
- * Two sections, each split into an upper and lower block:
- *   Section A  — seats 1-A … 91-A, numbered left→right, top→bottom.
- *   Section B  — seats 1-B … 80-B, numbered right→left (ascending toward the
- *                aisle), so within a row the highest number sits on the left.
+ * Two sections sit either side of the centre aisle, facing the stage, each
+ * split into an upper and lower block:
+ *   Section A  — left of the aisle. Seats 1-A … 94-A, numbered left→right,
+ *                top→bottom.
+ *   Section B  — right of the aisle. Seats 1-B … 83-B, numbered right→left
+ *                (ascending toward the aisle), so within a row the highest
+ *                number sits on the left.
+ *
+ * The two sections are always rendered side by side, at every breakpoint —
+ * stacking them makes B read as the back of the room.
  */
 
 type BlockDef = {
@@ -24,6 +30,8 @@ type SectionDef = {
   id: 'A' | 'B';
   title: string;
   suffix: 'A' | 'B';
+  /** which side of the centre aisle this section sits on, facing the stage */
+  side: 'Left' | 'Right';
   /** total grid columns the section spans (widest block) */
   gridCols: number;
   /** empty seat-height rows rendered above the section's blocks */
@@ -36,6 +44,7 @@ const SECTIONS: SectionDef[] = [
     id: 'A',
     title: 'Section A',
     suffix: 'A',
+    side: 'Left',
     gridCols: 7,
     blocks: [
       { rows: 5, cols: 7, start: 1, order: 'ltr' },
@@ -48,6 +57,7 @@ const SECTIONS: SectionDef[] = [
     id: 'B',
     title: 'Section B',
     suffix: 'B',
+    side: 'Right',
     gridCols: 7,
     // first row is left empty; Section B seats start on the second row
     topSpacerRows: 1,
@@ -66,6 +76,7 @@ export type SeatBlock = { gridCols: number; rows: Seat[][] };
 export type SeatSection = {
   id: 'A' | 'B';
   title: string;
+  side: 'Left' | 'Right';
   gridCols: number;
   topSpacerRows: number;
   blocks: SeatBlock[];
@@ -88,6 +99,7 @@ function buildSection(def: SectionDef): SeatSection {
   return {
     id: def.id,
     title: def.title,
+    side: def.side,
     gridCols: def.gridCols,
     topSpacerRows: def.topSpacerRows ?? 0,
     blocks,
